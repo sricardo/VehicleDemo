@@ -2,12 +2,31 @@
 
 using namespace demo;
 
-BLEManager::BLEManager()
+BLEManager::BLEManager(const char* BLELocalName)
 {
-    Serial.print("Creating BLE Manager...");
-    device2Mobile = BLEService(DEVICE_TO_MOBILE_BLE_SERVICE_UUID);
-    mobile2Device = BLEService(MOBILE_TO_DEVICE_BLE_SERVICE_UUID);
-    Serial.println("OK");;
+    Serial.println("Creating BLE Manager...");
+    Serial.print("Starting BLE...");
+
+    if (!BLE.begin()) {
+        Serial.println("failed");
+    } else {
+        Serial.println("OK");
+
+        Serial.print("Creating BLE services...");
+        device2Mobile = BLEService(DEVICE_TO_MOBILE_BLE_SERVICE_UUID);
+        mobile2Device = BLEService(MOBILE_TO_DEVICE_BLE_SERVICE_UUID);
+        Serial.println("OK");
+        
+        Serial.print("Setting advertised local name and service UUIDs...");
+        BLE.setLocalName(BLELocalName);
+        BLE.setAdvertisedService(device2Mobile);
+        BLE.setAdvertisedService(mobile2Device);
+        Serial.println("OK");
+
+        Serial.println("BLE Manager created");
+    }
+
+    
 }
 
 void BLEManager::sendPitch(short int pitch) const

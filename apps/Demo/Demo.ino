@@ -23,13 +23,16 @@ https://github.com/sricardo/VehicleDemo.git
 
 #include "src/BLEManager.h"
 
+#define SERIAL_BAUDRATE 9600
+
 using namespace demo;
 
-static BLEManager bleManager; // Creates the BLE Manager
-static Vehicle vehicle;       // Creates the Vehicle
+static BLEManager bleManager(BLE_LOCAL_NAME);   // Creates the BLE Manager
+static Vehicle vehicle;                         // Creates the Vehicle
 
 void setup()
 {
+    Serial.begin(SERIAL_BAUDRATE);
 }
 
 void loop()

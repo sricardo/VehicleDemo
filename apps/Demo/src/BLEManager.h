@@ -23,7 +23,7 @@ namespace demo
     {
     public:
         /** \brief Constructor */
-        BLEManager();
+        BLEManager(const char* BLELocalName);
         /** \brief Destructor */
         ~BLEManager() = default;
 
