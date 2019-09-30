@@ -21,11 +21,11 @@ Features:
 https://github.com/sricardo/VehicleDemo.git
 ******************************************************************************/
 
-#include "Vehicle.h"
+#include "src/Vehicle.h"
 
-using namespace demo;
+//using namespace demo;
 
-static Vehicle vehicle;
+//static Vehicle vehicle;
 
 void setup()
 {

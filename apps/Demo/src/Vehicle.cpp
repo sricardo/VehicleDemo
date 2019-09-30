@@ -8,8 +8,6 @@ Vehicle::Vehicle() : radioON(false), shockDetected(false), pitch(0), roll(0), te
     settings.tempUnit = TemperatureUnit::CELSIUS;
 }
 
-Vehicle::~Vehicle() {}
-
 void Vehicle::openTrunk() const
 {
     // TODO
@@ -32,7 +30,7 @@ void Vehicle::disableRadio() const
 
 void Vehicle::enableRadio() const
 {
-
+    // TODO
 }
 
 void Vehicle::sendTrunkStatus() const
