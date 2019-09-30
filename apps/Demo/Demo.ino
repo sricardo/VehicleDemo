@@ -21,11 +21,12 @@ Features:
 https://github.com/sricardo/VehicleDemo.git
 ******************************************************************************/
 
-#include "src/Vehicle.h"
+#include "src/BLEManager.h"
 
-//using namespace demo;
+using namespace demo;
 
-//static Vehicle vehicle;
+static BLEManager bleManager; // Creates the BLE Manager
+static Vehicle vehicle;       // Creates the Vehicle
 
 void setup()
 {

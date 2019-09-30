@@ -4,18 +4,26 @@ using namespace demo;
 
 Vehicle::Vehicle() : radioON(false), shockDetected(false), pitch(0), roll(0), temperature(0), lightsMode(LightsMode::OFF), trunkStatus(TrunkState::CLOSED)
 {
+    Serial.print("Creating Vehicle...");
     settings.shockSensitivity = 0;
     settings.tempUnit = TemperatureUnit::CELSIUS;
+    Serial.println("OK");
 }
 
 void Vehicle::openTrunk() const
 {
     // TODO
+    Serial.print("Opening vehicle's trunk...");
+
+    Serial.println("OK");
 }
 
 void Vehicle::closeTrunk() const
 {
     // TODO
+    Serial.print("Closing vehicle's trunk...");
+
+    Serial.println("OK");
 }
 
 void Vehicle::applyLightsMode() const
@@ -26,16 +34,17 @@ void Vehicle::applyLightsMode() const
 void Vehicle::disableRadio() const
 {
     // TODO
+    Serial.print("Disabling vehicle's radio...");
+
+    Serial.println("OK");
 }
 
 void Vehicle::enableRadio() const
 {
     // TODO
-}
+    Serial.print("Enabling vehicle's radio...");
 
-void Vehicle::sendTrunkStatus() const
-{
-    // TODO
+    Serial.println("OK");
 }
 
 bool Vehicle::checkShockDetected() const
@@ -47,24 +56,4 @@ bool Vehicle::checkShockDetected() const
 void Vehicle::resetShockDetected()
 {
     shockDetected = false;
-}
-
-void Vehicle::sendShockDetected() const
-{
-    // TODO
-}
-
-void Vehicle::sendTemperature() const
-{
-    // TODO
-}
-
-void Vehicle::sendPitch() const
-{
-    // TODO
-}
-
-void Vehicle::sendRoll() const
-{
-    // TODO
 }

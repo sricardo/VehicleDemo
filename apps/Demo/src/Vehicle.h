@@ -44,7 +44,7 @@ namespace demo
     /** \brief Holds the settings the vehicle uses to do calculations */ 
     struct Settings
     {
-        uint8_t shockSensitivity;
+        unsigned char shockSensitivity;
         TemperatureUnit tempUnit;
     };
 
@@ -72,36 +72,21 @@ namespace demo
         /** \brief Enables the radio */
         void enableRadio() const;
 
-        
-        /** \brief Sends trunk status over BLE */
-        void sendTrunkStatus() const;
-
         /** \brief Checks if a shock has been detected 
          *  \return true if a shock has been detected, false otherwise
          */
         bool checkShockDetected() const;
         /** \brief Resets the shock detection */
         void resetShockDetected();
-        /** \brief Sends the shock detection value over BLE */
-        void sendShockDetected() const;
-
-        /** \brief Sends the temperature over BLE */
-        void sendTemperature() const;
-
-        /** \brief Sends pitch angle over BLE */
-        void sendPitch() const;
-
-        /** \brief Sends roll angle over BLE */
-        void sendRoll() const;
 
         Settings settings;      /**< Vehicle settings */
 
     private:
         bool radioON;           /**< Current radio's status */
         bool shockDetected;     /**< Indicates if a shock has been detected */
-        int16_t pitch;          /**< Current pitch angle */
-        int16_t roll;           /**< Current roll angle */
-        int16_t temperature;    /**< Current temperature */
+        short int pitch;        /**< Current pitch angle */
+        short int roll;         /**< Current roll angle */
+        short int temperature;  /**< Current temperature */
         LightsMode lightsMode;  /**< Current mode of the lights */
         TrunkState trunkStatus; /**< Vehicle trunk status */
     };
