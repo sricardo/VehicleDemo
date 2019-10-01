@@ -67,6 +67,9 @@ namespace demo
         /** \brief Applies lights mode */
         void applyLightsMode() const;
 
+        // TODO lights under the vehicle
+        // allumage + couleur
+
         /** \brief Disables the radio */
         void disableRadio() const;
         /** \brief Enables the radio */
