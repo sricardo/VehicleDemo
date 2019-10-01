@@ -57,11 +57,6 @@ bool BLEManager::initBLE(const char* BLELocalName)
     BLE.addService(mobile2Device);
     Serial.println("OK");
 
-    Serial.print("Assigning event handler for connected/disconnected to peripherical...");
-    BLE.setEventHandler(BLEConnected, blePeripheralConnectHandler);
-    BLE.setEventHandler(BLEDisconnected, blePeripheralDisconnectHandler);
-    Serial.println("OK");
-
     return true;
 }
 
@@ -105,14 +100,3 @@ void BLEManager::sendVehicleTrunkState(TrunkState vehicleTrunkState) const
     Serial.println("OK");
 }
 
-void BLEManager::blePeripheralConnectHandler(BLEDevice central)
-{
-    Serial.print("Connected event, central: ");
-    Serial.println(central.address());
-}
-
-void BLEManager::blePeripheralDisconnectHandler(BLEDevice central)
-{
-    Serial.print("Disconnected event, central: ");
-    Serial.println(central.address());
-}

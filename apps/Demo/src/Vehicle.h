@@ -65,7 +65,7 @@ namespace demo
         void closeTrunk() const;
 
         /** \brief Applies lights mode */
-        void applyLightsMode() const;
+        void applyLightsMode(LightsMode mode);
 
         // TODO lights under the vehicle
         // allumage + couleur

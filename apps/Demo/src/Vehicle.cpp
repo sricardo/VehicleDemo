@@ -31,9 +31,10 @@ void Vehicle::closeTrunk() const
     Serial.println("OK");
 }
 
-void Vehicle::applyLightsMode() const
+void Vehicle::applyLightsMode(LightsMode mode)
 {
     // TODO
+    lightsMode = mode;
 }
 
 void Vehicle::disableRadio() const
