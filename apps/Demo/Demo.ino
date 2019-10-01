@@ -27,14 +27,22 @@ https://github.com/sricardo/VehicleDemo.git
 
 using namespace demo;
 
-static BLEManager bleManager(BLE_LOCAL_NAME);   // Creates the BLE Manager
-static Vehicle vehicle;                         // Creates the Vehicle
+static BLEManager bleManager;   // Creates the BLE Manager
+static Vehicle vehicle;         // Creates the Vehicle
 
 void setup()
 {
     Serial.begin(SERIAL_BAUDRATE);
+    
+    if (bleManager.initBLE(BLE_LOCAL_NAME)) {
+        BLE.advertise();
+        Serial.println("BLE device active, waiting for connections...");
+    } else {
+        Serial.println("ERROR: BLE DEVICE IS NOT ACTIVE !!!");
+    }
 }
 
 void loop()
 {
+    BLE.poll();
 }

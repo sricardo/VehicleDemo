@@ -2,31 +2,67 @@
 
 using namespace demo;
 
-BLEManager::BLEManager(const char* BLELocalName)
+BLEManager::BLEManager():
+    device2Mobile(BLEService(DEVICE_TO_MOBILE_BLE_SERVICE_UUID)),
+    mobile2Device(BLEService(MOBILE_TO_DEVICE_BLE_SERVICE_UUID)),
+    vehicleLightsCommandCharacteristic(BLEUnsignedCharCharacteristic(VEHICLE_LIGHTS_COMMAND_CHARACTERISTIC, BLERead)),
+    vehicleRadioCommandCharacteristic(BLEBoolCharacteristic(VEHICLE_RADIO_COMMAND_CHARACTERISTIC, BLERead)),
+    vehicleShockSensitivitySettingCharacteristic(BLEUnsignedCharCharacteristic(VEHICLE_SHOCK_SENSITIVITY_SETTING_CHARACTERISTIC, BLERead)),
+    vehicleTemperatureUnitSettingCharacteristic(BLEUnsignedCharCharacteristic(VEHICLE_TEMPERATURE_UNIT_SETTING_CHARACTERISTIC, BLERead)),
+    vehicleTrunkCommandCharacteristic(BLEBoolCharacteristic(VEHICLE_TRUNK_COMMAND_CHARACTERISTIC, BLERead)),
+    vehiclePitchDataCharacteristic(BLEShortCharacteristic(VEHICLE_PITCH_DATA_CHARACTERISTIC, BLEWrite)),
+    vehicleRollDataCharacteristic(BLEShortCharacteristic(VEHICLE_ROLL_DATA_CHARACTERISTIC, BLEWrite)),
+    vehicleShockDetectionDataCharacteristic(BLEBoolCharacteristic(VEHICLE_SHOCK_DETECTION_DATA_CHARACTERISTIC, BLEWrite)),
+    vehicleTemperatureDataCharacteristic(BLEShortCharacteristic(VEHICLE_TEMPERATURE_DATA_CHARACTERISTIC, BLEWrite)),
+    vehicleTrunkStateDataCharacteristic(BLEUnsignedCharCharacteristic(VEHICLE_TRUNK_STATUS_DATA_CHARACTERISTIC, BLEWrite))
 {
-    Serial.println("Creating BLE Manager...");
+}
+
+bool BLEManager::initBLE(const char* BLELocalName)
+{
     Serial.print("Starting BLE...");
 
     if (!BLE.begin()) {
         Serial.println("failed");
-    } else {
-        Serial.println("OK");
-
-        Serial.print("Creating BLE services...");
-        device2Mobile = BLEService(DEVICE_TO_MOBILE_BLE_SERVICE_UUID);
-        mobile2Device = BLEService(MOBILE_TO_DEVICE_BLE_SERVICE_UUID);
-        Serial.println("OK");
-        
-        Serial.print("Setting advertised local name and service UUIDs...");
-        BLE.setLocalName(BLELocalName);
-        BLE.setAdvertisedService(device2Mobile);
-        BLE.setAdvertisedService(mobile2Device);
-        Serial.println("OK");
-
-        Serial.println("BLE Manager created");
+        return false;
     }
 
+    Serial.println("OK");
+
+    Serial.print("Setting the local name peripherical advertises: ");
+    Serial.println(BLELocalName);
+    BLE.setLocalName(BLELocalName);
     
+    Serial.print("Setting the UUIDs for the services this peripherical advertises...");
+    BLE.setAdvertisedService(device2Mobile);
+    BLE.setAdvertisedService(mobile2Device);
+    Serial.println("OK");
+
+    Serial.print("Adding the characteristics to the services...");
+    device2Mobile.addCharacteristic(vehiclePitchDataCharacteristic);
+    device2Mobile.addCharacteristic(vehicleRollDataCharacteristic);
+    device2Mobile.addCharacteristic(vehicleShockDetectionDataCharacteristic);
+    device2Mobile.addCharacteristic(vehicleTemperatureDataCharacteristic);
+    device2Mobile.addCharacteristic(vehicleTrunkStateDataCharacteristic);
+
+    mobile2Device.addCharacteristic(vehicleLightsCommandCharacteristic);
+    mobile2Device.addCharacteristic(vehicleRadioCommandCharacteristic);
+    mobile2Device.addCharacteristic(vehicleShockSensitivitySettingCharacteristic);
+    mobile2Device.addCharacteristic(vehicleTemperatureUnitSettingCharacteristic);
+    mobile2Device.addCharacteristic(vehicleTrunkCommandCharacteristic);
+    Serial.println("OK");
+
+    Serial.print("Adding services...");
+    BLE.addService(device2Mobile);
+    BLE.addService(mobile2Device);
+    Serial.println("OK");
+
+    Serial.print("Assigning event handler for connected/disconnected to peripherical...");
+    BLE.setEventHandler(BLEConnected, blePeripheralConnectHandler);
+    BLE.setEventHandler(BLEDisconnected, blePeripheralDisconnectHandler);
+    Serial.println("OK");
+
+    return true;
 }
 
 void BLEManager::sendPitch(short int pitch) const
@@ -34,7 +70,7 @@ void BLEManager::sendPitch(short int pitch) const
     // TODO
     Serial.print("Sending vehicle's pitch...");
 
-    Serial.println("OK");;
+    Serial.println("OK");
 }
 
 void BLEManager::sendRoll(short int roll) const
@@ -42,7 +78,7 @@ void BLEManager::sendRoll(short int roll) const
     // TODO
     Serial.print("Sending vehicle's roll...");
 
-    Serial.println("OK");;
+    Serial.println("OK");
 }
         
 void BLEManager::sendVehicleShockDetected(bool shockDetected) const
@@ -50,7 +86,7 @@ void BLEManager::sendVehicleShockDetected(bool shockDetected) const
     // TODO
     Serial.print("Sending vehicle's shock detection...");
 
-    Serial.println("OK");;
+    Serial.println("OK");
 }
 
 void BLEManager::sendVehicleTemperature(short int temperature) const
@@ -58,7 +94,7 @@ void BLEManager::sendVehicleTemperature(short int temperature) const
     // TODO
     Serial.print("Sending vehicle's temperature...");
 
-    Serial.println("OK");;
+    Serial.println("OK");
 }
 
 void BLEManager::sendVehicleTrunkState(TrunkState vehicleTrunkState) const
@@ -66,5 +102,17 @@ void BLEManager::sendVehicleTrunkState(TrunkState vehicleTrunkState) const
     // TODO
     Serial.print("Sending vehicle's trunk state...");
 
-    Serial.println("OK");;
+    Serial.println("OK");
+}
+
+void BLEManager::blePeripheralConnectHandler(BLEDevice central)
+{
+    Serial.print("Connected event, central: ");
+    Serial.println(central.address());
+}
+
+void BLEManager::blePeripheralDisconnectHandler(BLEDevice central)
+{
+    Serial.print("Disconnected event, central: ");
+    Serial.println(central.address());
 }

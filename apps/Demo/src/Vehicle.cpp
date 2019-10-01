@@ -2,12 +2,17 @@
 
 using namespace demo;
 
-Vehicle::Vehicle() : radioON(false), shockDetected(false), pitch(0), roll(0), temperature(0), lightsMode(LightsMode::OFF), trunkStatus(TrunkState::CLOSED)
+Vehicle::Vehicle():
+    radioON(false),
+    shockDetected(false),
+    pitch(0),
+    roll(0),
+    temperature(0),
+    lightsMode(LightsMode::OFF),
+    trunkStatus(TrunkState::CLOSED)
 {
-    Serial.print("Creating Vehicle...");
     settings.shockSensitivity = 0;
     settings.tempUnit = TemperatureUnit::CELSIUS;
-    Serial.println("OK");
 }
 
 void Vehicle::openTrunk() const
