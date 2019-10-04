@@ -76,6 +76,9 @@ namespace demo
         BLEBoolCharacteristic           vehicleShockDetectionDataCharacteristic;        /**< \brief BLE characteristic for vehicle shock detection data */  
         BLEShortCharacteristic          vehicleTemperatureDataCharacteristic;           /**< \brief BLE characteristic for vehicle temperature data */
         BLEUnsignedCharCharacteristic   vehicleTrunkStateDataCharacteristic;            /**< \brief BLE characteristic for vehicle trunk state data */
+    
+    private:
+        void setServicesAndCharacteristics();
     };
 }
 

@@ -33,28 +33,14 @@ bool BLEManager::initBLE(const char* BLELocalName)
     Serial.println(BLELocalName);
     BLE.setLocalName(BLELocalName);
     
-    Serial.print("Setting the UUIDs for the services this peripherical advertises...");
-    BLE.setAdvertisedService(device2Mobile);
-    BLE.setAdvertisedService(mobile2Device);
-    Serial.println("OK");
+    setServicesAndCharacteristics();
 
-    Serial.print("Adding the characteristics to the services...");
-    device2Mobile.addCharacteristic(vehiclePitchDataCharacteristic);
-    device2Mobile.addCharacteristic(vehicleRollDataCharacteristic);
-    device2Mobile.addCharacteristic(vehicleShockDetectionDataCharacteristic);
-    device2Mobile.addCharacteristic(vehicleTemperatureDataCharacteristic);
-    device2Mobile.addCharacteristic(vehicleTrunkStateDataCharacteristic);
-
-    mobile2Device.addCharacteristic(vehicleLightsCommandCharacteristic);
-    mobile2Device.addCharacteristic(vehicleRadioCommandCharacteristic);
-    mobile2Device.addCharacteristic(vehicleShockSensitivitySettingCharacteristic);
-    mobile2Device.addCharacteristic(vehicleTemperatureUnitSettingCharacteristic);
-    mobile2Device.addCharacteristic(vehicleTrunkCommandCharacteristic);
-    Serial.println("OK");
-
-    Serial.print("Adding services...");
-    BLE.addService(device2Mobile);
-    BLE.addService(mobile2Device);
+    Serial.print("Setting initial values for the characteristic...");
+    vehiclePitchDataCharacteristic.setValue(0);
+    vehicleRollDataCharacteristic.setValue(0);
+    vehicleShockDetectionDataCharacteristic.setValue(false);  
+    vehicleTemperatureDataCharacteristic.setValue(0);
+    vehicleTrunkStateDataCharacteristic.setValue(0);
     Serial.println("OK");
 
     return true;
@@ -100,3 +86,29 @@ void BLEManager::sendVehicleTrunkState(TrunkState vehicleTrunkState) const
     Serial.println("OK");
 }
 
+void BLEManager::setServicesAndCharacteristics()
+{
+    Serial.print("Setting the UUIDs for the services this peripherical advertises...");
+    BLE.setAdvertisedService(device2Mobile);
+    BLE.setAdvertisedService(mobile2Device);
+    Serial.println("OK");
+
+    Serial.print("Adding the characteristics to the services...");
+    device2Mobile.addCharacteristic(vehiclePitchDataCharacteristic);
+    device2Mobile.addCharacteristic(vehicleRollDataCharacteristic);
+    device2Mobile.addCharacteristic(vehicleShockDetectionDataCharacteristic);
+    device2Mobile.addCharacteristic(vehicleTemperatureDataCharacteristic);
+    device2Mobile.addCharacteristic(vehicleTrunkStateDataCharacteristic);
+
+    mobile2Device.addCharacteristic(vehicleLightsCommandCharacteristic);
+    mobile2Device.addCharacteristic(vehicleRadioCommandCharacteristic);
+    mobile2Device.addCharacteristic(vehicleShockSensitivitySettingCharacteristic);
+    mobile2Device.addCharacteristic(vehicleTemperatureUnitSettingCharacteristic);
+    mobile2Device.addCharacteristic(vehicleTrunkCommandCharacteristic);
+    Serial.println("OK");
+
+    Serial.print("Adding services...");
+    BLE.addService(device2Mobile);
+    BLE.addService(mobile2Device);
+    Serial.println("OK");
+}

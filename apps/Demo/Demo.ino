@@ -168,10 +168,10 @@ void setup()
     Serial.begin(SERIAL_BAUDRATE);
     
     if (bleManager.initBLE(BLE_LOCAL_NAME)) {
-        BLE.advertise();
         Serial.println("BLE device active, waiting for connections...");
     } else {
         Serial.println("ERROR: BLE DEVICE IS NOT ACTIVE !!!");
+        return;
     }
 
     Serial.print("Assigning event handlers for connected/disconnected to peripherical...");
@@ -186,6 +186,8 @@ void setup()
     bleManager.vehicleTemperatureUnitSettingCharacteristic.setEventHandler(BLEWritten, vehicleTemperatureUnitSettingCharacteristicWritten);
     bleManager.vehicleTrunkCommandCharacteristic.setEventHandler(BLEWritten, vehicleTrunkCommandCharacteristicWritten);
     Serial.println("OK");
+
+    BLE.advertise();
 }
 
 void loop()
