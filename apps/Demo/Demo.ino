@@ -83,15 +83,17 @@ void vehicleLightsCommandCharacteristicWritten(BLEDevice central, BLECharacteris
  */
 void vehicleRadioCommandCharacteristicWritten(BLEDevice central, BLECharacteristic characteristic)
 {
-    Serial.print("Vehicle radio command received: ");
-
     bool value = characteristic.value();
+
+    Serial.print("Vehicle radio command received: ");
 
     switch(value) {
     case false:
+        Serial.println("OFF");
         vehicle.disableRadio();
         break;
     case true:
+        Serial.println("ON");
         vehicle.enableRadio();
         break;
     }
@@ -103,7 +105,14 @@ void vehicleRadioCommandCharacteristicWritten(BLEDevice central, BLECharacterist
  */
 void vehicleShockSensitivitySettingCharacteristicWritten(BLEDevice central, BLECharacteristic characteristic)
 {
+    unsigned char value = (unsigned char)(*(characteristic.value()));
 
+    Serial.print("Vehicle shock sensitivity setting received: ");
+    Serial.println(value);
+
+    if (value >= 0 && value <= 100) {
+        vehicle.settings.shockSensitivity = value;
+    }
 }
 
 /** \brief Handler managing vehicle temperature unit setting reception
