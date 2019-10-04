@@ -121,7 +121,24 @@ void vehicleShockSensitivitySettingCharacteristicWritten(BLEDevice central, BLEC
  */
 void vehicleTemperatureUnitSettingCharacteristicWritten(BLEDevice central, BLECharacteristic characteristic)
 {
+    unsigned char value = (unsigned char)(*(characteristic.value()));
 
+    Serial.print("Vehicle temperature unit setting received: ");
+
+    switch(value) {
+    case TemperatureUnit::CELSIUS:
+        Serial.println("CELSIUS");
+        break;
+    case TemperatureUnit::FARENHEIT:
+        Serial.println("FARENHEIT");
+        break;
+    default:
+        Serial.print(value);
+        Serial.println(" (unknown value)");
+        return;
+    }
+
+    vehicle.settings.tempUnit = (TemperatureUnit)value;
 }
 
 /** \brief Handler managing vehicle trunk command reception
