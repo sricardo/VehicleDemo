@@ -147,7 +147,20 @@ void vehicleTemperatureUnitSettingCharacteristicWritten(BLEDevice central, BLECh
  */
 void vehicleTrunkCommandCharacteristicWritten(BLEDevice central, BLECharacteristic characteristic)
 {
+    bool value = characteristic.value();
 
+    Serial.print("Vehicle trunk command received: ");
+
+    switch(value) {
+    case false:
+        Serial.println("CLOSE");
+        vehicle.closeTrunk();
+        break;
+    case true:
+        Serial.println("OPEN");
+        vehicle.openTrunk();
+        break;
+    }
 }
 
 void setup()
