@@ -56,7 +56,7 @@ void vehicleLightsCommandCharacteristicWritten(BLEDevice central, BLECharacteris
 {
     unsigned char value = (unsigned char)(*(characteristic.value()));
 
-    Serial.print("Vehicle lights command event, written: ");
+    Serial.print("Vehicle lights command received: ");
 
     switch(value) {
     case LightsMode::OFF:
@@ -83,7 +83,20 @@ void vehicleLightsCommandCharacteristicWritten(BLEDevice central, BLECharacteris
  */
 void vehicleRadioCommandCharacteristicWritten(BLEDevice central, BLECharacteristic characteristic)
 {
+    bool value = characteristic.value();
 
+    Serial.print("Vehicle radio command received: ");
+
+    switch(value) {
+    case false:
+        Serial.println("OFF");
+        vehicle.disableRadio();
+        break;
+    case true:
+        Serial.println("ON");
+        vehicle.enableRadio();
+        break;
+    }
 }
 
 /** \brief Handler managing vehicle shock sensitivity setting reception
@@ -92,7 +105,14 @@ void vehicleRadioCommandCharacteristicWritten(BLEDevice central, BLECharacterist
  */
 void vehicleShockSensitivitySettingCharacteristicWritten(BLEDevice central, BLECharacteristic characteristic)
 {
+    unsigned char value = (unsigned char)(*(characteristic.value()));
 
+    Serial.print("Vehicle shock sensitivity setting received: ");
+    Serial.println(value);
+
+    if (value >= 0 && value <= 100) {
+        vehicle.settings.shockSensitivity = value;
+    }
 }
 
 /** \brief Handler managing vehicle temperature unit setting reception
@@ -101,7 +121,24 @@ void vehicleShockSensitivitySettingCharacteristicWritten(BLEDevice central, BLEC
  */
 void vehicleTemperatureUnitSettingCharacteristicWritten(BLEDevice central, BLECharacteristic characteristic)
 {
+    unsigned char value = (unsigned char)(*(characteristic.value()));
 
+    Serial.print("Vehicle temperature unit setting received: ");
+
+    switch(value) {
+    case TemperatureUnit::CELSIUS:
+        Serial.println("CELSIUS");
+        break;
+    case TemperatureUnit::FARENHEIT:
+        Serial.println("FARENHEIT");
+        break;
+    default:
+        Serial.print(value);
+        Serial.println(" (unknown value)");
+        return;
+    }
+
+    vehicle.settings.tempUnit = (TemperatureUnit)value;
 }
 
 /** \brief Handler managing vehicle trunk command reception
@@ -110,7 +147,20 @@ void vehicleTemperatureUnitSettingCharacteristicWritten(BLEDevice central, BLECh
  */
 void vehicleTrunkCommandCharacteristicWritten(BLEDevice central, BLECharacteristic characteristic)
 {
+    bool value = characteristic.value();
 
+    Serial.print("Vehicle trunk command received: ");
+
+    switch(value) {
+    case false:
+        Serial.println("CLOSE");
+        vehicle.closeTrunk();
+        break;
+    case true:
+        Serial.println("OPEN");
+        vehicle.openTrunk();
+        break;
+    }
 }
 
 void setup()

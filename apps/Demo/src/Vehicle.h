@@ -59,10 +59,10 @@ namespace demo
         /** \brief Destructor */
         ~Vehicle() = default;
 
-        /** \brief Opens the trunk */
-        void openTrunk() const;
         /** \brief Closes the trunk */
         void closeTrunk() const;
+        /** \brief Opens the trunk */
+        void openTrunk() const;
 
         /** \brief Applies lights mode */
         void applyLightsMode(LightsMode mode);

@@ -15,18 +15,18 @@ Vehicle::Vehicle():
     settings.tempUnit = TemperatureUnit::CELSIUS;
 }
 
-void Vehicle::openTrunk() const
-{
-    // TODO
-    Serial.print("Opening vehicle's trunk...");
-
-    Serial.println("OK");
-}
-
 void Vehicle::closeTrunk() const
 {
     // TODO
     Serial.print("Closing vehicle's trunk...");
+
+    Serial.println("OK");
+}
+
+void Vehicle::openTrunk() const
+{
+    // TODO
+    Serial.print("Opening vehicle's trunk...");
 
     Serial.println("OK");
 }
