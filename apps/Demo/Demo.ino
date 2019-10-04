@@ -56,7 +56,7 @@ void vehicleLightsCommandCharacteristicWritten(BLEDevice central, BLECharacteris
 {
     unsigned char value = (unsigned char)(*(characteristic.value()));
 
-    Serial.print("Vehicle lights command event, written: ");
+    Serial.print("Vehicle lights command received: ");
 
     switch(value) {
     case LightsMode::OFF:
@@ -83,7 +83,18 @@ void vehicleLightsCommandCharacteristicWritten(BLEDevice central, BLECharacteris
  */
 void vehicleRadioCommandCharacteristicWritten(BLEDevice central, BLECharacteristic characteristic)
 {
+    Serial.print("Vehicle radio command received: ");
 
+    bool value = characteristic.value();
+
+    switch(value) {
+    case false:
+        vehicle.disableRadio();
+        break;
+    case true:
+        vehicle.enableRadio();
+        break;
+    }
 }
 
 /** \brief Handler managing vehicle shock sensitivity setting reception
