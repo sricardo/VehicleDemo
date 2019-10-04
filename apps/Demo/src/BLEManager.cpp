@@ -5,16 +5,16 @@ using namespace demo;
 BLEManager::BLEManager():
     device2Mobile(BLEService(DEVICE_TO_MOBILE_BLE_SERVICE_UUID)),
     mobile2Device(BLEService(MOBILE_TO_DEVICE_BLE_SERVICE_UUID)),
-    vehicleLightsCommandCharacteristic(BLEUnsignedCharCharacteristic(VEHICLE_LIGHTS_COMMAND_CHARACTERISTIC, BLERead)),
-    vehicleRadioCommandCharacteristic(BLEBoolCharacteristic(VEHICLE_RADIO_COMMAND_CHARACTERISTIC, BLERead)),
-    vehicleShockSensitivitySettingCharacteristic(BLEUnsignedCharCharacteristic(VEHICLE_SHOCK_SENSITIVITY_SETTING_CHARACTERISTIC, BLERead)),
-    vehicleTemperatureUnitSettingCharacteristic(BLEUnsignedCharCharacteristic(VEHICLE_TEMPERATURE_UNIT_SETTING_CHARACTERISTIC, BLERead)),
-    vehicleTrunkCommandCharacteristic(BLEBoolCharacteristic(VEHICLE_TRUNK_COMMAND_CHARACTERISTIC, BLERead)),
-    vehiclePitchDataCharacteristic(BLEShortCharacteristic(VEHICLE_PITCH_DATA_CHARACTERISTIC, BLEWrite)),
-    vehicleRollDataCharacteristic(BLEShortCharacteristic(VEHICLE_ROLL_DATA_CHARACTERISTIC, BLEWrite)),
-    vehicleShockDetectionDataCharacteristic(BLEBoolCharacteristic(VEHICLE_SHOCK_DETECTION_DATA_CHARACTERISTIC, BLEWrite)),
-    vehicleTemperatureDataCharacteristic(BLEShortCharacteristic(VEHICLE_TEMPERATURE_DATA_CHARACTERISTIC, BLEWrite)),
-    vehicleTrunkStateDataCharacteristic(BLEUnsignedCharCharacteristic(VEHICLE_TRUNK_STATUS_DATA_CHARACTERISTIC, BLEWrite))
+    vehicleLightsCommandCharacteristic(BLEUnsignedCharCharacteristic(VEHICLE_LIGHTS_COMMAND_CHARACTERISTIC, BLEWrite)),
+    vehicleRadioCommandCharacteristic(BLEBoolCharacteristic(VEHICLE_RADIO_COMMAND_CHARACTERISTIC, BLEWrite)),
+    vehicleShockSensitivitySettingCharacteristic(BLEUnsignedCharCharacteristic(VEHICLE_SHOCK_SENSITIVITY_SETTING_CHARACTERISTIC, BLEWrite)),
+    vehicleTemperatureUnitSettingCharacteristic(BLEUnsignedCharCharacteristic(VEHICLE_TEMPERATURE_UNIT_SETTING_CHARACTERISTIC, BLEWrite)),
+    vehicleTrunkCommandCharacteristic(BLEBoolCharacteristic(VEHICLE_TRUNK_COMMAND_CHARACTERISTIC, BLEWrite)),
+    vehiclePitchDataCharacteristic(BLEShortCharacteristic(VEHICLE_PITCH_DATA_CHARACTERISTIC, BLERead | BLENotify)),
+    vehicleRollDataCharacteristic(BLEShortCharacteristic(VEHICLE_ROLL_DATA_CHARACTERISTIC, BLERead | BLENotify)),
+    vehicleShockDetectionDataCharacteristic(BLEBoolCharacteristic(VEHICLE_SHOCK_DETECTION_DATA_CHARACTERISTIC, BLERead | BLENotify)),
+    vehicleTemperatureDataCharacteristic(BLEShortCharacteristic(VEHICLE_TEMPERATURE_DATA_CHARACTERISTIC, BLERead | BLENotify)),
+    vehicleTrunkStateDataCharacteristic(BLEUnsignedCharCharacteristic(VEHICLE_TRUNK_STATUS_DATA_CHARACTERISTIC, BLERead | BLENotify))
 {
 }
 
@@ -36,53 +36,48 @@ bool BLEManager::initBLE(const char* BLELocalName)
     setServicesAndCharacteristics();
 
     Serial.print("Setting initial values for the characteristic...");
-    vehiclePitchDataCharacteristic.setValue(0);
-    vehicleRollDataCharacteristic.setValue(0);
-    vehicleShockDetectionDataCharacteristic.setValue(false);  
-    vehicleTemperatureDataCharacteristic.setValue(0);
-    vehicleTrunkStateDataCharacteristic.setValue(0);
+    vehiclePitchDataCharacteristic.writeValue(0);
+    vehicleRollDataCharacteristic.writeValue(0);
+    vehicleShockDetectionDataCharacteristic.writeValue(false);  
+    vehicleTemperatureDataCharacteristic.writeValue(0);
+    vehicleTrunkStateDataCharacteristic.writeValue(0);
     Serial.println("OK");
 
     return true;
 }
 
-void BLEManager::sendPitch(short int pitch) const
+void BLEManager::sendPitch(short int pitch)
 {
-    // TODO
     Serial.print("Sending vehicle's pitch...");
-
+    vehiclePitchDataCharacteristic.writeValue(pitch);
     Serial.println("OK");
 }
 
-void BLEManager::sendRoll(short int roll) const
+void BLEManager::sendRoll(short int roll)
 {
-    // TODO
     Serial.print("Sending vehicle's roll...");
-
+    vehicleRollDataCharacteristic.writeValue(roll);
     Serial.println("OK");
 }
         
-void BLEManager::sendVehicleShockDetected(bool shockDetected) const
+void BLEManager::sendVehicleShockDetected(bool shockDetected)
 {
-    // TODO
     Serial.print("Sending vehicle's shock detection...");
-
+    vehicleShockDetectionDataCharacteristic.writeValue(shockDetected);
     Serial.println("OK");
 }
 
-void BLEManager::sendVehicleTemperature(short int temperature) const
+void BLEManager::sendVehicleTemperature(short int temperature)
 {
-    // TODO
     Serial.print("Sending vehicle's temperature...");
-
+    vehicleTemperatureDataCharacteristic.writeValue(temperature);
     Serial.println("OK");
 }
 
-void BLEManager::sendVehicleTrunkState(TrunkState vehicleTrunkState) const
+void BLEManager::sendVehicleTrunkState(TrunkState vehicleTrunkState)
 {
-    // TODO
     Serial.print("Sending vehicle's trunk state...");
-
+    vehicleTrunkStateDataCharacteristic.writeValue(vehicleTrunkState);
     Serial.println("OK");
 }
 
