@@ -17,17 +17,29 @@ Vehicle::Vehicle():
 
 void Vehicle::closeTrunk() const
 {
-    // TODO
     Serial.print("Closing vehicle's trunk...");
+
+    for (unsigned int delay = SERVO_FOR_TRUNK_DELAY_MIN ; delay <= SERVO_FOR_TRUNK_DELAY_MAX ; delay+=SERVO_FOR_TRUNK_DELAY_STEP_FOR_CLOSE) {
+        digitalWrite(SERVO_FOR_TRUNK_PIN, HIGH);
+        delayMicroseconds(delay);
+        digitalWrite(SERVO_FOR_TRUNK_PIN, LOW);
+        delayMicroseconds(SERVO_FOR_TRUNK_DELAY-delay);
+    }
 
     Serial.println("OK");
 }
 
 void Vehicle::openTrunk() const
 {
-    // TODO
     Serial.print("Opening vehicle's trunk...");
 
+    for (unsigned int delay = SERVO_FOR_TRUNK_DELAY_MAX; delay >= SERVO_FOR_TRUNK_DELAY_MIN ; delay-=SERVO_FOR_TRUNK_DELAY_STEP_FOR_OPEN) {
+        digitalWrite(SERVO_FOR_TRUNK_PIN, HIGH);
+        delayMicroseconds(delay);
+        digitalWrite(SERVO_FOR_TRUNK_PIN, LOW);
+        delayMicroseconds(SERVO_FOR_TRUNK_DELAY-delay);
+    }
+    
     Serial.println("OK");
 }
 

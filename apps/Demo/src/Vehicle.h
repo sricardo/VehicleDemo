@@ -13,6 +13,7 @@ https://github.com/sricardo/VehicleDemo.git
 #define VEHICLE_H
 
 #include "Arduino.h"
+#include "VehicleConfig.h"
 
 /** \brief Demo elements namespace */
 namespace demo
