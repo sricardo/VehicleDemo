@@ -9,6 +9,7 @@ Vehicle::Vehicle():
     roll(0),
     temperature(0),
     lightsMode(LightsMode::OFF),
+    imu(IMU_BUS_TYPE, IMU_INPUT_ARG),
     trunkStatus(TrunkState::CLOSED)
 {
     settings.shockSensitivity = 0;

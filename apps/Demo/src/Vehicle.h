@@ -12,7 +12,8 @@ https://github.com/sricardo/VehicleDemo.git
 #ifndef VEHICLE_H
 #define VEHICLE_H
 
-#include "Arduino.h"
+#include <Arduino.h>
+#include <SparkFunLSM6DS3.h>
 #include "VehicleConfig.h"
 
 /** \brief Demo elements namespace */
@@ -92,13 +93,14 @@ namespace demo
         Settings settings;      /**< Vehicle settings */
 
     private:
-        bool radioON;                   /**< Current radio's status */
-        bool shockDetected;             /**< Indicates if a shock has been detected */
-        short int pitch;                /**< Current pitch angle */
-        short int roll;                 /**< Current roll angle */
-        short int temperature;          /**< Current temperature */
-        LightsMode lightsMode;          /**< Current mode of the lights */
-        TrunkState trunkStatus;         /**< Vehicle trunk status */
+        bool radioON;           /**< Current radio's status */
+        bool shockDetected;     /**< Indicates if a shock has been detected */
+        short int pitch;        /**< Current pitch angle */
+        short int roll;         /**< Current roll angle */
+        short int temperature;  /**< Current temperature */
+        LightsMode lightsMode;  /**< Current mode of the lights */
+        LSM6DS3 imu;            /**< IMU */
+        TrunkState trunkStatus; /**< Vehicle trunk status */
     };
 }
 

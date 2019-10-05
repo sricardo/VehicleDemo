@@ -12,6 +12,9 @@ https://github.com/sricardo/VehicleDemo.git
 #ifndef VEHICLE_CONFIG_H
 #define VEHICLE_CONFIG_H
 
+#define IMU_BUS_TYPE    I2C_MODE
+#define IMU_INPUT_ARG   0x6A
+
 #define LIGHTS_BLINK_DURATION 500
 #define LIGHTS_PIN              4 // TODO
 
