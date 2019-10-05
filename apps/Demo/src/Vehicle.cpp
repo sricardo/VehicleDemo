@@ -42,11 +42,55 @@ void Vehicle::openTrunk() const
     
     Serial.println("OK");
 }
-
-void Vehicle::applyLightsMode(LightsMode mode)
+void Vehicle::setLightsMode(LightsMode mode)
 {
-    // TODO
+    Serial.print("Setting light mode: ");
     lightsMode = mode;
+
+    switch(mode) {
+    case LightsMode::OFF:
+        Serial.println("OFF");
+        break;
+    case LightsMode::ON:
+        Serial.println("ON");
+        break;
+    case LightsMode::BLINKING:
+        Serial.println("BLINKING");
+        break;
+    }
+}
+
+void Vehicle::applyLightsMode()
+{
+    static char blinkLedState                   = LOW;
+    static unsigned long blinkTime, currentTime = 0;
+
+    switch(lightsMode) {
+    case LightsMode::OFF:
+        if (blinkLedState == HIGH || blinkTime != 0) {
+            blinkLedState = LOW;
+            digitalWrite(LIGHTS_PIN, blinkLedState);
+            blinkTime = 0;
+        }
+        break;
+    case LightsMode::ON:
+        if (blinkLedState == LOW || blinkTime != 0) {
+            blinkLedState = HIGH;
+            digitalWrite(LIGHTS_PIN, blinkLedState);
+            blinkTime = 0;
+        }
+        break;
+    case LightsMode::BLINKING:
+        currentTime = millis();
+
+        if (currentTime - blinkTime >= LIGHTS_BLINK_DURATION) {
+            blinkLedState = (blinkLedState == LOW) ? HIGH : LOW;
+            digitalWrite(LIGHTS_PIN, blinkLedState);
+            blinkTime = currentTime;
+        }
+
+        break;
+    }
 }
 
 void Vehicle::disableRadio() const

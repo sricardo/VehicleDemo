@@ -65,8 +65,14 @@ namespace demo
         /** \brief Opens the trunk */
         void openTrunk() const;
 
-        /** \brief Applies lights mode */
-        void applyLightsMode(LightsMode mode);
+
+        /** \brief Sets lights mode
+         *  \param mode lights mode to apply
+         */
+        void setLightsMode(LightsMode mode);
+
+        /** \brief Apply lights mode */
+        void applyLightsMode();
 
         // TODO lights under the vehicle
         // allumage + couleur
@@ -86,13 +92,13 @@ namespace demo
         Settings settings;      /**< Vehicle settings */
 
     private:
-        bool radioON;           /**< Current radio's status */
-        bool shockDetected;     /**< Indicates if a shock has been detected */
-        short int pitch;        /**< Current pitch angle */
-        short int roll;         /**< Current roll angle */
-        short int temperature;  /**< Current temperature */
-        LightsMode lightsMode;  /**< Current mode of the lights */
-        TrunkState trunkStatus; /**< Vehicle trunk status */
+        bool radioON;                   /**< Current radio's status */
+        bool shockDetected;             /**< Indicates if a shock has been detected */
+        short int pitch;                /**< Current pitch angle */
+        short int roll;                 /**< Current roll angle */
+        short int temperature;          /**< Current temperature */
+        LightsMode lightsMode;          /**< Current mode of the lights */
+        TrunkState trunkStatus;         /**< Vehicle trunk status */
     };
 }
 

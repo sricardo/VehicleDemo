@@ -9,8 +9,11 @@ September 30, 2019
 https://github.com/sricardo/VehicleDemo.git
 ******************************************************************************/
 
-#ifndef BLE_CONFIG_H
-#define BLE_CONFIG_H
+#ifndef VEHICLE_CONFIG_H
+#define VEHICLE_CONFIG_H
+
+#define LIGHTS_BLINK_DURATION 500
+#define LIGHTS_PIN              4 // TBD
 
 #define SERVO_FOR_TRUNK_DELAY                   20000
 #define SERVO_FOR_TRUNK_DELAY_MAX               1450

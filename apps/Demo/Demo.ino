@@ -35,8 +35,9 @@ static BLEManager bleManager;   // Creates the BLE Manager
  */
 void blePeripheralConnectHandler(BLEDevice central)
 {
-    Serial.print("Connected event, central: ");
+    Serial.print("Connected to central: ");
     Serial.println(central.address());
+    digitalWrite(LED_BUILTIN, HIGH);
 }
 
 /** \brief Handler managing disconnection 
@@ -44,8 +45,9 @@ void blePeripheralConnectHandler(BLEDevice central)
  */
 void blePeripheralDisconnectHandler(BLEDevice central)
 {
-    Serial.print("Disconnected event, central: ");
+    Serial.print("Disconnected to central: ");
     Serial.println(central.address());
+    digitalWrite(LED_BUILTIN, LOW);
 }
 
 /** \brief Handler managing vehicle lights command reception
@@ -74,7 +76,7 @@ void vehicleLightsCommandCharacteristicWritten(BLEDevice central, BLECharacteris
         return;
     }
 
-    vehicle.applyLightsMode((LightsMode)value);
+    vehicle.setLightsMode((LightsMode)value);
 }
 
 /** \brief Handler managing vehicle radio command reception
@@ -166,6 +168,8 @@ void vehicleTrunkCommandCharacteristicWritten(BLEDevice central, BLECharacterist
 void setup()
 {
     Serial.begin(SERIAL_BAUDRATE);
+    pinMode(LED_BUILTIN, OUTPUT);
+    pinMode(LIGHTS_PIN, OUTPUT);
     
     if (bleManager.initBLE(BLE_LOCAL_NAME)) {
         Serial.println("BLE device active, waiting for connections...");
@@ -193,4 +197,5 @@ void setup()
 void loop()
 {
     BLE.poll();
+    vehicle.applyLightsMode();
 }
