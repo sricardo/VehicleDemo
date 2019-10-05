@@ -95,17 +95,15 @@ void Vehicle::applyLightsMode()
 
 void Vehicle::disableRadio() const
 {
-    // TODO
     Serial.print("Disabling vehicle's radio...");
-
+    digitalWrite(RADIO_PIN, LOW);
     Serial.println("OK");
 }
 
 void Vehicle::enableRadio() const
 {
-    // TODO
     Serial.print("Enabling vehicle's radio...");
-
+    digitalWrite(RADIO_PIN, HIGH);
     Serial.println("OK");
 }
 
