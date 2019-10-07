@@ -12,8 +12,8 @@ All communications are over BLE
 
 Features:
 - Trunk commands and status
+- Start/Stop the vehicle (ignition)
 - Lights management
-- Enable/Disable the radio
 - Read and send the temperature (unit configurable)
 - Read and send pitch and roll
 - Shock detection (sensitivity configurable)
@@ -79,24 +79,24 @@ void vehicleLightsCommandCharacteristicWritten(BLEDevice central, BLECharacteris
     vehicle.setLightsMode((LightsMode)value);
 }
 
-/** \brief Handler managing vehicle radio command reception
+/** \brief Handler managing vehicle ignition command reception
  *  \param central the sender
  *  \param characteristic the characteristic that has received the command
  */
-void vehicleRadioCommandCharacteristicWritten(BLEDevice central, BLECharacteristic characteristic)
+void vehicleIgnitionCommandCharacteristicWritten(BLEDevice central, BLECharacteristic characteristic)
 {
     bool value = characteristic.value();
 
-    Serial.print("Vehicle radio command received: ");
+    Serial.print("Vehicle ignition command received: ");
 
     switch(value) {
     case false:
         Serial.println("OFF");
-        vehicle.disableRadio();
+        vehicle.stop();
         break;
     case true:
         Serial.println("ON");
-        vehicle.enableRadio();
+        vehicle.start();
         break;
     }
 }
@@ -193,8 +193,8 @@ void setup()
     Serial.println("OK");
 
     Serial.print("Assigning event handlers for characteristics...");
+    bleManager.vehicleIgnitionCommandCharacteristic.setEventHandler(BLEWritten, vehicleIgnitionCommandCharacteristicWritten);
     bleManager.vehicleLightsCommandCharacteristic.setEventHandler(BLEWritten, vehicleLightsCommandCharacteristicWritten);
-    bleManager.vehicleRadioCommandCharacteristic.setEventHandler(BLEWritten, vehicleRadioCommandCharacteristicWritten);
     bleManager.vehicleShockSensitivitySettingCharacteristic.setEventHandler(BLEWritten, vehicleShockSensitivitySettingCharacteristicWritten);
     bleManager.vehicleTemperatureUnitSettingCharacteristic.setEventHandler(BLEWritten, vehicleTemperatureUnitSettingCharacteristicWritten);
     bleManager.vehicleTrunkCommandCharacteristic.setEventHandler(BLEWritten, vehicleTrunkCommandCharacteristicWritten);

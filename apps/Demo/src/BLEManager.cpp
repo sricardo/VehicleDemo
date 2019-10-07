@@ -5,8 +5,8 @@ using namespace demo;
 BLEManager::BLEManager():
     device2Mobile(BLEService(DEVICE_TO_MOBILE_BLE_SERVICE_UUID)),
     mobile2Device(BLEService(MOBILE_TO_DEVICE_BLE_SERVICE_UUID)),
+    vehicleIgnitionCommandCharacteristic(BLEBoolCharacteristic(VEHICLE_IGNITION_COMMAND_CHARACTERISTIC, BLEWrite)),
     vehicleLightsCommandCharacteristic(BLEUnsignedCharCharacteristic(VEHICLE_LIGHTS_COMMAND_CHARACTERISTIC, BLEWrite)),
-    vehicleRadioCommandCharacteristic(BLEBoolCharacteristic(VEHICLE_RADIO_COMMAND_CHARACTERISTIC, BLEWrite)),
     vehicleShockSensitivitySettingCharacteristic(BLEUnsignedCharCharacteristic(VEHICLE_SHOCK_SENSITIVITY_SETTING_CHARACTERISTIC, BLEWrite)),
     vehicleTemperatureUnitSettingCharacteristic(BLEUnsignedCharCharacteristic(VEHICLE_TEMPERATURE_UNIT_SETTING_CHARACTERISTIC, BLEWrite)),
     vehicleTrunkCommandCharacteristic(BLEBoolCharacteristic(VEHICLE_TRUNK_COMMAND_CHARACTERISTIC, BLEWrite)),
@@ -113,8 +113,8 @@ void BLEManager::setServicesAndCharacteristics()
     device2Mobile.addCharacteristic(vehicleTemperatureDataCharacteristic);
     device2Mobile.addCharacteristic(vehicleTrunkStateDataCharacteristic);
 
+    mobile2Device.addCharacteristic(vehicleIgnitionCommandCharacteristic);
     mobile2Device.addCharacteristic(vehicleLightsCommandCharacteristic);
-    mobile2Device.addCharacteristic(vehicleRadioCommandCharacteristic);
     mobile2Device.addCharacteristic(vehicleShockSensitivitySettingCharacteristic);
     mobile2Device.addCharacteristic(vehicleTemperatureUnitSettingCharacteristic);
     mobile2Device.addCharacteristic(vehicleTrunkCommandCharacteristic);

@@ -87,10 +87,10 @@ namespace demo
         // TODO lights under the vehicle
         // allumage + couleur
 
-        /** \brief Disables the radio */
-        void disableRadio() const;
-        /** \brief Enables the radio */
-        void enableRadio() const;
+        /** \brief Starts the vehicle */
+        void start();
+        /** \brief Stops the vehicle */
+        void stop();
 
         /** \brief Applies the shock sensitivity settings to the IMU */
         void applyShockSensitivity();
@@ -111,7 +111,7 @@ namespace demo
         Settings settings;      /**< Vehicle settings */
 
     private:
-        bool radioON;               /**< Current radio's status */
+        bool ignitionON;            /**< Current ignition status */
         bool shockDetected;         /**< Indicates if a shock has been detected */
         unsigned long shockTime;    /**< Last shock time */
         short int pitch;            /**< Current pitch angle */

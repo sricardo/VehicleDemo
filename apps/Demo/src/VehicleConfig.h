@@ -26,7 +26,7 @@ https://github.com/sricardo/VehicleDemo.git
 #define LIGHTS_BLINK_DURATION 500
 #define LIGHTS_PIN              4 // TODO
 
-#define RADIO_PIN 5 // TODO
+#define IGNITION_PIN 5 // TODO
 
 #define SERVO_FOR_TRUNK_DELAY                   20000
 #define SERVO_FOR_TRUNK_DELAY_MAX               1450

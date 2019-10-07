@@ -68,8 +68,8 @@ namespace demo
         BLEService device2Mobile; /**< BLE Service for device to mobile communications */
         BLEService mobile2Device; /**< BLE Service for mobile to device communications */
 
+        BLEBoolCharacteristic           vehicleIgnitionCommandCharacteristic;           /**< BLE characteristic for vehicle ignition command */
         BLEUnsignedCharCharacteristic   vehicleLightsCommandCharacteristic;             /**< BLE characteristic for vehicle lights command */
-        BLEBoolCharacteristic           vehicleRadioCommandCharacteristic;              /**< BLE characteristic for vehicle radio command */
         BLEUnsignedCharCharacteristic   vehicleShockSensitivitySettingCharacteristic;   /**< BLE characteristic for vehicle shock sensitivity setting */
         BLEUnsignedCharCharacteristic   vehicleTemperatureUnitSettingCharacteristic;    /**< BLE characteristic for vehicle temperature unit setting */
         BLEBoolCharacteristic           vehicleTrunkCommandCharacteristic;              /**< BLE characteristic for vehicle trunk command */

@@ -3,7 +3,7 @@
 using namespace demo;
 
 Vehicle::Vehicle():
-    radioON(false),
+    ignitionON(false),
     shockDetected(false),
     shockTime(0),
     pitch(0),
@@ -142,17 +142,19 @@ void Vehicle::applyLightsMode()
     }
 }
 
-void Vehicle::disableRadio() const
+void Vehicle::start()
 {
-    Serial.print("Disabling vehicle's radio...");
-    digitalWrite(RADIO_PIN, LOW);
+    Serial.print("Starting the vehicle...");
+    digitalWrite(IGNITION_PIN, HIGH);
+    ignitionON = true;
     Serial.println("OK");
 }
 
-void Vehicle::enableRadio() const
+void Vehicle::stop()
 {
-    Serial.print("Enabling vehicle's radio...");
-    digitalWrite(RADIO_PIN, HIGH);
+    Serial.print("Stopping the vehicle...");
+    digitalWrite(IGNITION_PIN, HIGH);
+    ignitionON = false;
     Serial.println("OK");
 }
 
