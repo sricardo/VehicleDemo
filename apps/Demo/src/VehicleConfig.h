@@ -36,7 +36,6 @@ https://github.com/sricardo/VehicleDemo.git
 #define SERVO_FOR_TRUNK_PIN                     12
 
 #define SHOCK_DURATION_IN_MS 3000
-#define SHOCK_PIN 2
 
 #define TRUNK_OPEN_DURATION_IN_MS 3000
 

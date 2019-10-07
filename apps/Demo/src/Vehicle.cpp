@@ -164,8 +164,18 @@ void Vehicle::applyShockSensitivity()
     uint8_t errorAccumulator = imu.writeRegister(LSM6DS3_ACC_GYRO_TAP_THS_6D, threshold);
 }
 
-bool Vehicle::getShockDetected() const
+bool Vehicle::readShockDetected()
 {
+    byte detection;
+    
+    imu.readRegister(&detection, 0x1C); 
+
+    if (detection &= 0x40) {
+        shockDetected = true;
+    } else {
+        shockDetected = false;
+    }
+
     return shockDetected;
 }
 

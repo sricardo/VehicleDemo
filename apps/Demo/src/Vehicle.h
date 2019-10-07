@@ -94,10 +94,10 @@ namespace demo
 
         /** \brief Applies the shock sensitivity settings to the IMU */
         void applyShockSensitivity();
-        /** \brief Gets shock detected value 
+        /** \brief Reads shock detected value 
          *  \return the shock detected value
          */
-        bool getShockDetected() const;
+        bool readShockDetected();
         /** \brief Sets shock detected and time */
         void setShockDetected();
         /** \brief Resets the shock detection */

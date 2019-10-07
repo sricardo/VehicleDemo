@@ -167,18 +167,11 @@ void vehicleTrunkCommandCharacteristicWritten(BLEDevice central, BLECharacterist
     }
 }
 
-/** \brief Callback when a shock is detected */
-void shockDetected() {
-    Serial.println("Shock detected");
-    vehicle.setShockDetected();
-}
-
 void setup()
 {
     Serial.begin(SERIAL_BAUDRATE);
     pinMode(LED_BUILTIN, OUTPUT);
     pinMode(LIGHTS_PIN, OUTPUT);
-    pinMode(SHOCK_PIN, INPUT);
     
     if (bleManager.initBLE(BLE_LOCAL_NAME)) {
         Serial.println("BLE device active, waiting for connections...");
@@ -202,13 +195,12 @@ void setup()
 
     BLE.advertise();
     vehicle.initIMU();
-    attachInterrupt(0, shockDetected, RISING); // Configure the interrupt pin
 }
 
 void loop()
 {
     BLE.poll();
-    bleManager.sendVehicleShockDetected(vehicle.getShockDetected(), true);
+    bleManager.sendVehicleShockDetected(vehicle.readShockDetected(), true);
     bleManager.sendVehicleTemperature(vehicle.readTemperature(), true);
     bleManager.sendVehicleTrunkState(vehicle.getTrunkStatus(), true);
     vehicle.applyLightsMode();
