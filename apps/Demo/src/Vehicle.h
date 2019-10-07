@@ -67,10 +67,13 @@ namespace demo
         bool initIMU();
 
         /** \brief Closes the trunk */
-        void closeTrunk() const;
+        void closeTrunk();
         /** \brief Opens the trunk */
-        void openTrunk() const;
-
+        void openTrunk();
+        /** \brief Gets the trunk state
+         *  \return the trunk state
+         */
+        TrunkState getTrunkStatus() const;
 
         /** \brief Sets lights mode
          *  \param mode lights mode to apply
@@ -87,6 +90,12 @@ namespace demo
         /** \brief Enables the radio */
         void enableRadio() const;
 
+        /** \brief Applies the shock sensitivity settings to the IMU */
+        void applyShockSensitivity();
+        /** \brief Gets shock detected value 
+         *  \return the shock detected value
+         */
+        bool getShockDetected() const;
         /** \brief Sets shock detected and time */
         void setShockDetected();
         /** \brief Resets the shock detection */
@@ -95,7 +104,7 @@ namespace demo
         /** \brief Reads the temperature from the IMU 
          *  \return the temperature, in Celsius or Farenheit, depending on the vehicle settings
          */
-        float readTemperature();
+        short int readTemperature();
 
         Settings settings;      /**< Vehicle settings */
 

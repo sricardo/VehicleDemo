@@ -115,6 +115,8 @@ void vehicleShockSensitivitySettingCharacteristicWritten(BLEDevice central, BLEC
     if (value >= 0 && value <= 100) {
         vehicle.settings.shockSensitivity = value;
     }
+
+    vehicle.applyShockSensitivity();
 }
 
 /** \brief Handler managing vehicle temperature unit setting reception
@@ -205,10 +207,11 @@ void setup()
 
 void loop()
 {
-    float temp;
-
     BLE.poll();
+    bleManager.sendVehicleShockDetected(vehicle.getShockDetected(), true);
+    bleManager.sendVehicleTemperature(vehicle.readTemperature(), true);
+    bleManager.sendVehicleTrunkState(vehicle.getTrunkStatus(), true);
     vehicle.applyLightsMode();
     vehicle.resetShockDetected();
-    bleManager.sendVehicleTemperature(vehicle.readTemperature(), true);
+    
 }

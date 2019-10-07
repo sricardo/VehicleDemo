@@ -46,22 +46,28 @@ bool BLEManager::initBLE(const char* BLELocalName)
     return true;
 }
 
-void BLEManager::sendPitch(short int pitch)
+void BLEManager::sendVehiclePitch(short int pitch)
 {
     Serial.print("Sending vehicle's pitch...");
     vehiclePitchDataCharacteristic.writeValue(pitch);
     Serial.println("OK");
 }
 
-void BLEManager::sendRoll(short int roll)
+void BLEManager::sendVehicleRoll(short int roll)
 {
     Serial.print("Sending vehicle's roll...");
     vehicleRollDataCharacteristic.writeValue(roll);
     Serial.println("OK");
 }
         
-void BLEManager::sendVehicleShockDetected(bool shockDetected)
+void BLEManager::sendVehicleShockDetected(bool shockDetected, bool onlyOnChange)
 {
+    static bool lastShockDetected = false;
+
+    if (onlyOnChange && (lastShockDetected == shockDetected)) {
+        return;
+    }
+
     Serial.print("Sending vehicle's shock detection...");
     vehicleShockDetectionDataCharacteristic.writeValue(shockDetected);
     Serial.println("OK");
@@ -80,8 +86,14 @@ void BLEManager::sendVehicleTemperature(short int temperature, bool onlyOnChange
     Serial.println("OK");
 }
 
-void BLEManager::sendVehicleTrunkState(TrunkState vehicleTrunkState)
+void BLEManager::sendVehicleTrunkState(TrunkState vehicleTrunkState, bool onlyOnChange)
 {
+    static TrunkState lastSentTrunkState = TrunkState::CLOSED;
+
+    if (onlyOnChange && (lastSentTrunkState == vehicleTrunkState)) {
+        return;
+    }
+
     Serial.print("Sending vehicle's trunk state...");
     vehicleTrunkStateDataCharacteristic.writeValue(vehicleTrunkState);
     Serial.println("OK");

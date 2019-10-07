@@ -44,23 +44,26 @@ namespace demo
         /** \brief Sends the given pitch angle over BLE
          *  \param pitch the given pitch
          */
-        void sendPitch(short int pitch);
+        void sendVehiclePitch(short int pitch);
         /** \brief Sends the given roll angle over BLE 
          *  \param roll the given roll
          */
-        void sendRoll(short int roll);
+        void sendVehicleRoll(short int roll);
         /** \brief Sends the given shock detection over BLE
          *  \param shockDetected the given shock detection
+         *  \param onlyOnChange indicates if data must be sent only if it has changed
          */
-        void sendVehicleShockDetected(bool shockDetected);
+        void sendVehicleShockDetected(bool shockDetected, bool onlyOnChange = true);
         /** \brief Sends the given temperature over BLE
          *  \param temperature the given temperature
+         *  \param onlyOnChange indicates if data must be sent only if it has changed
          */
         void sendVehicleTemperature(short int temperature, bool onlyOnChange = true);
         /** \brief Sends the given trunk state over BLE 
          *  \param vehicleTrunkState the given trunk state
+         *  \param onlyOnChange indicates if data must be sent only if it has changed
          */
-        void sendVehicleTrunkState(TrunkState vehicleTrunkState);
+        void sendVehicleTrunkState(TrunkState vehicleTrunkState, bool onlyOnChange = true);
 
         BLEService device2Mobile; /**< BLE Service for device to mobile communications */
         BLEService mobile2Device; /**< BLE Service for mobile to device communications */

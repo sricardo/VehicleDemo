@@ -45,9 +45,10 @@ bool Vehicle::initIMU()
     return true;
 }
 
-void Vehicle::closeTrunk() const
+void Vehicle::closeTrunk()
 {
     Serial.print("Closing vehicle's trunk...");
+    trunkStatus = TrunkState::CLOSING;
 
     for (unsigned int delay = SERVO_FOR_TRUNK_DELAY_MIN ; delay <= SERVO_FOR_TRUNK_DELAY_MAX ; delay+=SERVO_FOR_TRUNK_DELAY_STEP_FOR_CLOSE) {
         digitalWrite(SERVO_FOR_TRUNK_PIN, HIGH);
@@ -56,12 +57,14 @@ void Vehicle::closeTrunk() const
         delayMicroseconds(SERVO_FOR_TRUNK_DELAY-delay);
     }
 
+    trunkStatus = TrunkState::CLOSED;
     Serial.println("OK");
 }
 
-void Vehicle::openTrunk() const
+void Vehicle::openTrunk()
 {
     Serial.print("Opening vehicle's trunk...");
+    trunkStatus = TrunkState::OPENING;
 
     for (unsigned int delay = SERVO_FOR_TRUNK_DELAY_MAX; delay >= SERVO_FOR_TRUNK_DELAY_MIN ; delay-=SERVO_FOR_TRUNK_DELAY_STEP_FOR_OPEN) {
         digitalWrite(SERVO_FOR_TRUNK_PIN, HIGH);
@@ -70,8 +73,15 @@ void Vehicle::openTrunk() const
         delayMicroseconds(SERVO_FOR_TRUNK_DELAY-delay);
     }
     
+    trunkStatus = TrunkState::OPENED;
     Serial.println("OK");
 }
+
+TrunkState Vehicle::getTrunkStatus() const
+{
+    return trunkStatus;
+}
+
 void Vehicle::setLightsMode(LightsMode mode)
 {
     Serial.print("Setting light mode: ");
@@ -137,6 +147,17 @@ void Vehicle::enableRadio() const
     Serial.println("OK");
 }
 
+void Vehicle::applyShockSensitivity()
+{
+    uint8_t threshold = 31.0/100.0*settings.shockSensitivity;
+    uint8_t errorAccumulator = imu.writeRegister(LSM6DS3_ACC_GYRO_TAP_THS_6D, threshold);
+}
+
+bool Vehicle::getShockDetected() const
+{
+    return shockDetected;
+}
+
 void Vehicle::setShockDetected()
 {
     shockDetected = true;
@@ -151,7 +172,7 @@ void Vehicle::resetShockDetected()
     }
 }
 
-float Vehicle::readTemperature()
+short int Vehicle::readTemperature()
 {
     if (settings.tempUnit == TemperatureUnit::CELSIUS) {
         temperature = imu.readTempC();
