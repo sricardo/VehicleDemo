@@ -16,6 +16,33 @@ Vehicle::Vehicle():
     settings.tempUnit = TemperatureUnit::CELSIUS;
 }
 
+bool Vehicle::initIMU()
+{
+    Serial.print("Configuring IMU...");
+
+	if (imu.beginCore() != 0 ) {
+		Serial.println("failed (error at beginCore)");
+        return false;
+	}
+
+	uint8_t errorAccumulator = 0; // Error accumulation variable
+
+    errorAccumulator += imu.writeRegister(LSM6DS3_ACC_GYRO_CTRL1_XL, IMU_CTRL1_XL);         // 1. Turns on the accelerometer
+	errorAccumulator += imu.writeRegister(LSM6DS3_ACC_GYRO_TAP_CFG1, IMU_TAP_CFG);          // 2. Enables tap detection
+	errorAccumulator += imu.writeRegister(LSM6DS3_ACC_GYRO_TAP_THS_6D, IMU_TAP_THS_6D);     // 3. Sets tap threshold
+    errorAccumulator += imu.writeRegister(LSM6DS3_ACC_GYRO_INT_DUR2, IMU_INT_DUR2);         // 4. Sets Quiet and Shock time windows 
+	errorAccumulator += imu.writeRegister(LSM6DS3_ACC_GYRO_WAKE_UP_THS, IMU_WAKE_UP_THS);   // 5. Enables single or double tap
+	errorAccumulator += imu.writeRegister(LSM6DS3_ACC_GYRO_MD1_CFG, IMU_MD1_CFG);           // 6. Single tap interrupt
+
+    if (errorAccumulator) {
+		Serial.println("failed (problem configuring the device)");
+        return false;
+	}
+
+    Serial.println("OK");
+    return true;
+}
+
 void Vehicle::closeTrunk() const
 {
     Serial.print("Closing vehicle's trunk...");
@@ -118,3 +145,15 @@ void Vehicle::resetShockDetected()
 {
     shockDetected = false;
 }
+
+float Vehicle::readTemperature()
+{
+    if (settings.tempUnit == TemperatureUnit::CELSIUS) {
+        temperature = imu.readTempC();
+    } else {
+        temperature = imu.readTempF();
+    }
+    
+    return temperature;
+}
+

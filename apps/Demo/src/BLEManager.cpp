@@ -67,8 +67,14 @@ void BLEManager::sendVehicleShockDetected(bool shockDetected)
     Serial.println("OK");
 }
 
-void BLEManager::sendVehicleTemperature(short int temperature)
+void BLEManager::sendVehicleTemperature(short int temperature, bool onlyOnChange)
 {
+    static short int lastSentTemperature = 0;
+
+    if (onlyOnChange && (lastSentTemperature == temperature)) {
+        return;
+    }
+
     Serial.print("Sending vehicle's temperature...");
     vehicleTemperatureDataCharacteristic.writeValue(temperature);
     Serial.println("OK");

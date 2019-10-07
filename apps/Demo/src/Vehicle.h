@@ -61,6 +61,11 @@ namespace demo
         /** \brief Destructor */
         ~Vehicle() = default;
 
+        /** \brief Initializes IMU for shock detection
+         *  \return false if something goes wrong, else otherwise
+         */
+        bool initIMU();
+
         /** \brief Closes the trunk */
         void closeTrunk() const;
         /** \brief Opens the trunk */
@@ -71,7 +76,6 @@ namespace demo
          *  \param mode lights mode to apply
          */
         void setLightsMode(LightsMode mode);
-
         /** \brief Apply lights mode */
         void applyLightsMode();
 
@@ -89,6 +93,11 @@ namespace demo
         bool checkShockDetected() const;
         /** \brief Resets the shock detection */
         void resetShockDetected();
+
+        /** \brief Reads the temperature from the IMU 
+         *  \return the temperature, in Celsius or Farenheit, depending on the vehicle settings
+         */
+        float readTemperature();
 
         Settings settings;      /**< Vehicle settings */
 

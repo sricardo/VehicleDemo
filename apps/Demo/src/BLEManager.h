@@ -56,7 +56,7 @@ namespace demo
         /** \brief Sends the given temperature over BLE
          *  \param temperature the given temperature
          */
-        void sendVehicleTemperature(short int temperature);
+        void sendVehicleTemperature(short int temperature, bool onlyOnChange = true);
         /** \brief Sends the given trunk state over BLE 
          *  \param vehicleTrunkState the given trunk state
          */

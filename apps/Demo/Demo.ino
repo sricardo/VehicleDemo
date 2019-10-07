@@ -192,10 +192,14 @@ void setup()
     Serial.println("OK");
 
     BLE.advertise();
+    vehicle.initIMU();
 }
 
 void loop()
 {
+    float temp;
+
     BLE.poll();
     vehicle.applyLightsMode();
+    bleManager.sendVehicleTemperature(vehicle.readTemperature(), true);
 }

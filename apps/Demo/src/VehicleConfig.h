@@ -15,6 +15,13 @@ https://github.com/sricardo/VehicleDemo.git
 #define IMU_BUS_TYPE    I2C_MODE
 #define IMU_INPUT_ARG   0x6A
 
+#define IMU_CTRL1_XL    0x60 // ODR_XL = 416 Hz, FS_XL = 2g
+#define IMU_TAP_CFG     0x0F // Tap detection on X, Y, Z axis with latch mode
+#define IMU_TAP_THS_6D  0x02 // Tap threshold
+#define IMU_INT_DUR2    0x0F // Quiet and Shock time windows (1 LSB corresponds to 8/ODR_XL time)
+#define IMU_WAKE_UP_THS 0x00 // Single Tap
+#define IMU_MD1_CFG     0x40 // Interrupt driven to INT1 pin
+
 #define LIGHTS_BLINK_DURATION 500
 #define LIGHTS_PIN              4 // TODO
 
