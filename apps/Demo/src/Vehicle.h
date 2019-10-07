@@ -74,6 +74,8 @@ namespace demo
          *  \return the trunk state
          */
         TrunkState getTrunkStatus() const;
+        /** \brief Close trunk automatically */
+        void autoCloseTrunk();
 
         /** \brief Sets lights mode
          *  \param mode lights mode to apply
@@ -118,6 +120,7 @@ namespace demo
         LightsMode lightsMode;      /**< Current mode of the lights */
         LSM6DS3 imu;                /**< IMU */
         TrunkState trunkStatus;     /**< Vehicle trunk status */
+        unsigned long trunkTimer;   /**< Vehicle trunk timer when opened */    
     };
 }
 

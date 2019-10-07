@@ -11,7 +11,8 @@ Vehicle::Vehicle():
     temperature(0),
     lightsMode(LightsMode::OFF),
     imu(IMU_BUS_TYPE, IMU_INPUT_ARG),
-    trunkStatus(TrunkState::CLOSED)
+    trunkStatus(TrunkState::CLOSED),
+    trunkTimer(0)
 {
     settings.shockSensitivity = 0;
     settings.tempUnit = TemperatureUnit::CELSIUS;
@@ -74,12 +75,20 @@ void Vehicle::openTrunk()
     }
     
     trunkStatus = TrunkState::OPENED;
+    trunkTimer = millis();
     Serial.println("OK");
 }
 
 TrunkState Vehicle::getTrunkStatus() const
 {
     return trunkStatus;
+}
+
+void Vehicle::autoCloseTrunk()
+{
+    if ((trunkStatus == TrunkState::OPENED) && ((millis() - trunkTimer) >= TRUNK_OPEN_DURATION_IN_MS)) {
+        closeTrunk();
+    }
 }
 
 void Vehicle::setLightsMode(LightsMode mode)

@@ -212,6 +212,7 @@ void loop()
     bleManager.sendVehicleTemperature(vehicle.readTemperature(), true);
     bleManager.sendVehicleTrunkState(vehicle.getTrunkStatus(), true);
     vehicle.applyLightsMode();
+    vehicle.autoCloseTrunk();
     vehicle.resetShockDetected();
     
 }
