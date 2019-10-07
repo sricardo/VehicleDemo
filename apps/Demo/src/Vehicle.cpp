@@ -5,6 +5,7 @@ using namespace demo;
 Vehicle::Vehicle():
     radioON(false),
     shockDetected(false),
+    shockTime(0),
     pitch(0),
     roll(0),
     temperature(0),
@@ -40,6 +41,7 @@ bool Vehicle::initIMU()
 	}
 
     Serial.println("OK");
+
     return true;
 }
 
@@ -135,15 +137,18 @@ void Vehicle::enableRadio() const
     Serial.println("OK");
 }
 
-bool Vehicle::checkShockDetected() const
+void Vehicle::setShockDetected()
 {
-    // TODO
-    return false;
+    shockDetected = true;
+    shockTime = millis();
 }
 
 void Vehicle::resetShockDetected()
 {
-    shockDetected = false;
+    if (shockDetected && ((millis() - shockTime) >= SHOCK_DURATION_IN_MS)) {
+        shockDetected = false;
+        shockTime = 0;
+    }
 }
 
 float Vehicle::readTemperature()

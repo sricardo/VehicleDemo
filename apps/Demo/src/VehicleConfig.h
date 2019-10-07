@@ -21,6 +21,7 @@ https://github.com/sricardo/VehicleDemo.git
 #define IMU_INT_DUR2    0x0F // Quiet and Shock time windows (1 LSB corresponds to 8/ODR_XL time)
 #define IMU_WAKE_UP_THS 0x00 // Single Tap
 #define IMU_MD1_CFG     0x40 // Interrupt driven to INT1 pin
+#define IMU_INT1_PIN    2    // Pin used for interrupt
 
 #define LIGHTS_BLINK_DURATION 500
 #define LIGHTS_PIN              4 // TODO
@@ -33,5 +34,8 @@ https://github.com/sricardo/VehicleDemo.git
 #define SERVO_FOR_TRUNK_DELAY_STEP_FOR_CLOSE    30
 #define SERVO_FOR_TRUNK_DELAY_STEP_FOR_OPEN     20
 #define SERVO_FOR_TRUNK_PIN                     12
+
+#define SHOCK_DURATION_IN_MS 300
+#define SHOCK_PIN 2
 
 #endif

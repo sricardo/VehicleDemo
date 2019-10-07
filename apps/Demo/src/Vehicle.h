@@ -87,10 +87,8 @@ namespace demo
         /** \brief Enables the radio */
         void enableRadio() const;
 
-        /** \brief Checks if a shock has been detected 
-         *  \return true if a shock has been detected, false otherwise
-         */
-        bool checkShockDetected() const;
+        /** \brief Sets shock detected and time */
+        void setShockDetected();
         /** \brief Resets the shock detection */
         void resetShockDetected();
 
@@ -102,14 +100,15 @@ namespace demo
         Settings settings;      /**< Vehicle settings */
 
     private:
-        bool radioON;           /**< Current radio's status */
-        bool shockDetected;     /**< Indicates if a shock has been detected */
-        short int pitch;        /**< Current pitch angle */
-        short int roll;         /**< Current roll angle */
-        short int temperature;  /**< Current temperature */
-        LightsMode lightsMode;  /**< Current mode of the lights */
-        LSM6DS3 imu;            /**< IMU */
-        TrunkState trunkStatus; /**< Vehicle trunk status */
+        bool radioON;               /**< Current radio's status */
+        bool shockDetected;         /**< Indicates if a shock has been detected */
+        unsigned long shockTime;    /**< Last shock time */
+        short int pitch;            /**< Current pitch angle */
+        short int roll;             /**< Current roll angle */
+        short int temperature;      /**< Current temperature */
+        LightsMode lightsMode;      /**< Current mode of the lights */
+        LSM6DS3 imu;                /**< IMU */
+        TrunkState trunkStatus;     /**< Vehicle trunk status */
     };
 }
 
