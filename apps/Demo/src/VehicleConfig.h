@@ -35,8 +35,8 @@ https://github.com/sricardo/VehicleDemo.git
 
 // Parameter for Light blink
 #define LIGHTS_BLINK_DURATION       500
-#define LIGHTS_BLINK_5S_DURATION    50  
-#define LIGHTS_BLINK_5S_PERIOD      5000  
+#define LIGHTS_BLINK_1S_DURATION    50  
+#define LIGHTS_BLINK_1S_PERIOD      1000  
 
 // Parameter for Trunk 
 #define TRUNK_OPEN_DURATION_IN_MS               10000
