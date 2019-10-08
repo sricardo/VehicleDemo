@@ -39,8 +39,11 @@ https://github.com/sricardo/VehicleDemo.git
 
 // Parameter for Light blink
 #define LIGHTS_BLINK_DURATION 500
+#define LIGHTS_BLINK_5S_DURATION 50    
 
-// Parameter for Trunk Servo 
+
+// Parameter for Trunk 
+#define TRUNK_OPEN_DURATION_IN_MS 10000
 #define SERVO_FOR_TRUNK_DELAY                   20000
 #define SERVO_FOR_TRUNK_DELAY_MAX               1450
 #define SERVO_FOR_TRUNK_DELAY_MIN               850
@@ -48,8 +51,10 @@ https://github.com/sricardo/VehicleDemo.git
 #define SERVO_FOR_TRUNK_DELAY_STEP_FOR_OPEN     20
 
 
+// Parameter 
 #define SHOCK_DURATION_IN_MS 3000
+#define LIGHTS_BLINK_SHOCK_DURATION 100 
 
-#define TRUNK_OPEN_DURATION_IN_MS 3000
+
 
 #endif

@@ -94,7 +94,7 @@ void vehicleIgnitionCommandCharacteristicWritten(BLEDevice central, BLECharacter
     Serial.print("Vehicle ignition command received: ");
 
     switch(value) {
-    case false:
+    case false :
         Serial.println("OFF");
         vehicle.stop();
         break;
@@ -158,6 +158,13 @@ void vehicleTrunkCommandCharacteristicWritten(BLEDevice central, BLECharacterist
     bool value = characteristic.value();
 
     Serial.print("Vehicle trunk command received: ");
+    
+    /*
+    const unsigned char test = characteristic.value();
+    Serial.println(test, HEX);
+    Serial.println(value, HEX);
+     * 
+     */
 
     switch(value) {
     case false:
@@ -174,7 +181,9 @@ void vehicleTrunkCommandCharacteristicWritten(BLEDevice central, BLECharacterist
 void setup()
 {
     Serial.begin(SERIAL_BAUDRATE);
-    
+
+
+    //Initialisation of the PIN mode
     pinMode(LED_BUILTIN, OUTPUT);
     pinMode(LIGHTS_FRONT_LEFT_PIN, OUTPUT);
     pinMode(LIGHTS_FRONT_RIGHT_PIN, OUTPUT);
@@ -186,6 +195,7 @@ void setup()
     pinMode(LIGHTS_TRUNK_RED, OUTPUT);
     pinMode(LIGHTS_TRUNK_GREEN, OUTPUT);
 
+    // Put all the PIN to LOW
     digitalWrite(LIGHTS_FRONT_LEFT_PIN,LOW);
     digitalWrite(LIGHTS_FRONT_RIGHT_PIN,LOW);
     digitalWrite(LIGHTS_BACK_LEFT_PIN,LOW);
@@ -194,7 +204,15 @@ void setup()
     digitalWrite(LIGHTS_BELLOW_RED,LOW);
     digitalWrite(LIGHTS_TRUNK_RED,LOW);
     digitalWrite(LIGHTS_FRONT_LEFT_PIN,LOW);
-    digitalWrite(LIGHTS_TRUNK_GREEN,LOW);    
+    digitalWrite(LIGHTS_TRUNK_GREEN,LOW); 
+
+    // Put the servo of the trunk to low mode 
+    for (unsigned int i = 0 ; i <= 10 ; i+=1) {
+        digitalWrite(SERVO_FOR_TRUNK_PIN, HIGH);
+        delayMicroseconds(SERVO_FOR_TRUNK_DELAY_MAX);
+        digitalWrite(SERVO_FOR_TRUNK_PIN, LOW);
+        delayMicroseconds(SERVO_FOR_TRUNK_DELAY-SERVO_FOR_TRUNK_DELAY_MAX );
+    }
 
     if (bleManager.initBLE(BLE_LOCAL_NAME)) {
         Serial.println("BLE device active, waiting for connections...");

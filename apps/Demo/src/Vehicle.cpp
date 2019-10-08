@@ -188,6 +188,27 @@ bool Vehicle::readShockDetected()
 
     if (detection &= 0x40) {
         shockDetected = true;
+	
+	// Blink of the trunk LED in RED to signal a Shock 
+	digitalWrite(LIGHTS_TRUNK_RED, HIGH);
+    	digitalWrite(LIGHTS_TRUNK_GREEN, LOW);
+  	delay(LIGHTS_BLINK_SHOCK_DURATION);
+
+	digitalWrite(LIGHTS_TRUNK_RED, LOW);
+    	digitalWrite(LIGHTS_TRUNK_GREEN, LOW);
+  	delay(LIGHTS_BLINK_SHOCK_DURATION);
+
+	digitalWrite(LIGHTS_TRUNK_RED, HIGH);
+    	digitalWrite(LIGHTS_TRUNK_GREEN, LOW);
+  	delay(LIGHTS_BLINK_SHOCK_DURATION);
+
+	digitalWrite(LIGHTS_TRUNK_RED, LOW);
+    	digitalWrite(LIGHTS_TRUNK_GREEN, LOW);
+  	delay(LIGHTS_BLINK_SHOCK_DURATION);
+
+	// REMETTRE A L'ETAT PRECEDENT !!!! 
+	
+
     } else {
         shockDetected = false;
     }
@@ -198,6 +219,7 @@ bool Vehicle::readShockDetected()
 void Vehicle::setShockDetected()
 {
     shockDetected = true;
+    digitalWriteLIGHTS_BELLOW_RED, HIGH);
     shockTime = millis();
 }
 
@@ -205,6 +227,7 @@ void Vehicle::resetShockDetected()
 {
     if (shockDetected && ((millis() - shockTime) >= SHOCK_DURATION_IN_MS)) {
         shockDetected = false;
+	digitalWriteLIGHTS_BELLOW_RED, LOW);
         shockTime = 0;
     }
 }
