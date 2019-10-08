@@ -1,1 +1,32 @@
-int SERV = 12 ;int LED = 13 ;bool ok =false ;int duree;void setup() {  pinMode(SERV, OUTPUT);  pinMode(LED, OUTPUT);  Serial.begin(9600);  Serial.println("Initialisation");}void loop() {          Serial.println("Montée");    for (int duree = 950 ; duree <= 2200 ; duree=duree+12) {     digitalWrite(SERV, HIGH);     delayMicroseconds(duree);     digitalWrite(SERV, LOW);     delayMicroseconds(20000-duree);     }          delay(2000);       Serial.println("Descente");    for (int duree = 2200 ; duree >= 950 ; duree=duree-12) {     digitalWrite(SERV, HIGH);     delayMicroseconds(duree);     digitalWrite(SERV, LOW);     delayMicroseconds(20000-duree);     }          delay(2000);   }
+
+int SERV = 12 ;
+int duree;
+
+void setup() {
+  pinMode(SERV, OUTPUT);
+  Serial.begin(9600);
+  Serial.println("Initialisation");
+}
+
+void loop() { 
+  
+     Serial.println("Ouverture");
+    for (int duree = 1450 ; duree >= 850 ; duree=duree-20) {
+     digitalWrite(SERV, HIGH);
+     delayMicroseconds(duree);
+     digitalWrite(SERV, LOW);
+     delayMicroseconds(20000-duree);
+     }
+       
+    delay(2000);
+
+    Serial.println("Fermeture");
+    for (int duree = 850 ; duree <= 1450 ; duree=duree+30) {
+     digitalWrite(SERV, HIGH);
+     delayMicroseconds(duree);
+     digitalWrite(SERV, LOW);
+     delayMicroseconds(20000-duree);
+     }
+   
+    delay(2000);
+}
