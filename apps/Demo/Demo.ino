@@ -94,7 +94,7 @@ void vehicleIgnitionCommandCharacteristicWritten(BLEDevice central, BLECharacter
     Serial.print("Vehicle ignition command received: ");
 
     switch(value) {
-    case false :
+    case false :                                       //BUG !! ca ne passe jamais à bas.. 
         Serial.println("OFF");
         vehicle.stop();
         break;
@@ -158,16 +158,9 @@ void vehicleTrunkCommandCharacteristicWritten(BLEDevice central, BLECharacterist
     bool value = characteristic.value();
 
     Serial.print("Vehicle trunk command received: ");
-    
-    /*
-    const unsigned char test = characteristic.value();
-    Serial.println(test, HEX);
-    Serial.println(value, HEX);
-     * 
-     */
 
     switch(value) {
-    case false:
+    case false:                   
         Serial.println("CLOSE");
         vehicle.closeTrunk();
         break;
