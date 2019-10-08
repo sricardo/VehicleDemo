@@ -24,7 +24,8 @@ namespace demo
     {
         OFF = 0,
         ON = 1,
-        BLINKING = 2
+        BLINKING = 2,
+        BLINKING_5S = 3
     };
 
     /** \brief Temperature unit */
@@ -97,7 +98,7 @@ namespace demo
         /** \brief Reads shock detected value 
          *  \return the shock detected value
          */
-        bool readShockDetected();
+        bool readShockDetected(bool resumeLightAfter);
         /** \brief Sets shock detected and time */
         void setShockDetected();
         /** \brief Resets the shock detection */
@@ -111,6 +112,8 @@ namespace demo
         Settings settings;      /**< Vehicle settings */
 
     private:
+        uint8_t computeShockThreshold() const;
+
         bool ignitionON;            /**< Current ignition status */
         bool shockDetected;         /**< Indicates if a shock has been detected */
         unsigned long shockTime;    /**< Last shock time */

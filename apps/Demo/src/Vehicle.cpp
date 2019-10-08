@@ -30,12 +30,12 @@ bool Vehicle::initIMU()
 
 	uint8_t errorAccumulator = 0; // Error accumulation variable
 
-    errorAccumulator += imu.writeRegister(LSM6DS3_ACC_GYRO_CTRL1_XL, IMU_CTRL1_XL);         	// 1. Turns on the accelerometer
-	errorAccumulator += imu.writeRegister(LSM6DS3_ACC_GYRO_TAP_CFG1, IMU_TAP_CFG);          // 2. Enables tap detection
-	errorAccumulator += imu.writeRegister(LSM6DS3_ACC_GYRO_TAP_THS_6D, IMU_TAP_THS_6D);     // 3. Sets tap threshold
-    errorAccumulator += imu.writeRegister(LSM6DS3_ACC_GYRO_INT_DUR2, IMU_INT_DUR2);         	// 4. Sets Quiet and Shock time windows 
-	errorAccumulator += imu.writeRegister(LSM6DS3_ACC_GYRO_WAKE_UP_THS, IMU_WAKE_UP_THS);   // 5. Enables single or double tap
-	errorAccumulator += imu.writeRegister(LSM6DS3_ACC_GYRO_MD1_CFG, IMU_MD1_CFG);           // 6. Single tap interrupt
+    errorAccumulator += imu.writeRegister(LSM6DS3_ACC_GYRO_CTRL1_XL, IMU_CTRL1_XL);         	    // 1. Turns on the accelerometer
+	errorAccumulator += imu.writeRegister(LSM6DS3_ACC_GYRO_TAP_CFG1, IMU_TAP_CFG);                  // 2. Enables tap detection
+	errorAccumulator += imu.writeRegister(LSM6DS3_ACC_GYRO_TAP_THS_6D, computeShockThreshold());    // 3. Sets tap threshold
+    errorAccumulator += imu.writeRegister(LSM6DS3_ACC_GYRO_INT_DUR2, IMU_INT_DUR2);         	    // 4. Sets Quiet and Shock time windows 
+	errorAccumulator += imu.writeRegister(LSM6DS3_ACC_GYRO_WAKE_UP_THS, IMU_WAKE_UP_THS);           // 5. Enables single or double tap
+	errorAccumulator += imu.writeRegister(LSM6DS3_ACC_GYRO_MD1_CFG, IMU_MD1_CFG);                   // 6. Single tap interrupt
 
     if (errorAccumulator) {
 		Serial.println("failed (problem configuring the device)");
@@ -68,6 +68,10 @@ void Vehicle::closeTrunk()
 
 void Vehicle::openTrunk()
 {
+    if (trunkStatus == TrunkState::OPENED || trunkStatus == TrunkState::OPENING) {
+        return;
+    }
+
     Serial.print("Opening vehicle's trunk...");
     trunkStatus = TrunkState::OPENING;
 
@@ -118,29 +122,33 @@ void Vehicle::setLightsMode(LightsMode mode)
 
 void Vehicle::applyLightsMode()
 {
-    static char blinkLedState                   = LOW;
-    static unsigned long blinkTime, currentTime = 0;
+    static char blinkLedState = LOW;
+    static unsigned long blinkTime, blink5sTime, currentTime = 0;
 
     switch(lightsMode) {
     case LightsMode::OFF:
         if (blinkLedState == HIGH || blinkTime != 0) {
             blinkLedState = LOW;
             digitalWrite(LIGHTS_FRONT_LEFT_PIN, blinkLedState);
-	    digitalWrite(LIGHTS_FRONT_RIGHT_PIN, blinkLedState);
-	    digitalWrite(LIGHTS_BACK_LEFT_PIN, blinkLedState);
-	    digitalWrite(LIGHTS_BACK_RIGHT_PIN,blinkLedState);
+	        digitalWrite(LIGHTS_FRONT_RIGHT_PIN, blinkLedState);
+	        digitalWrite(LIGHTS_BACK_LEFT_PIN, blinkLedState);
+	        digitalWrite(LIGHTS_BACK_RIGHT_PIN,blinkLedState);
             blinkTime = 0;
+            blink5sTime = 0;
         }
+
         break;
     case LightsMode::ON:
         if (blinkLedState == LOW || blinkTime != 0) {
             blinkLedState = HIGH;
             digitalWrite(LIGHTS_FRONT_LEFT_PIN, blinkLedState);
-	    digitalWrite(LIGHTS_FRONT_RIGHT_PIN, blinkLedState);
-	    digitalWrite(LIGHTS_BACK_LEFT_PIN, blinkLedState);
-	    digitalWrite(LIGHTS_BACK_RIGHT_PIN,blinkLedState);
+	        digitalWrite(LIGHTS_FRONT_RIGHT_PIN, blinkLedState);
+	        digitalWrite(LIGHTS_BACK_LEFT_PIN, blinkLedState);
+	        digitalWrite(LIGHTS_BACK_RIGHT_PIN,blinkLedState);
             blinkTime = 0;
+            blink5sTime = 0;
         }
+
         break;
     case LightsMode::BLINKING:
         currentTime = millis();
@@ -148,10 +156,32 @@ void Vehicle::applyLightsMode()
         if (currentTime - blinkTime >= LIGHTS_BLINK_DURATION) {
             blinkLedState = (blinkLedState == LOW) ? HIGH : LOW;
             digitalWrite(LIGHTS_FRONT_LEFT_PIN, blinkLedState);
-	    digitalWrite(LIGHTS_FRONT_RIGHT_PIN, blinkLedState);
-	    digitalWrite(LIGHTS_BACK_LEFT_PIN, blinkLedState);
-	    digitalWrite(LIGHTS_BACK_RIGHT_PIN,blinkLedState);
+	        digitalWrite(LIGHTS_FRONT_RIGHT_PIN, blinkLedState);
+	        digitalWrite(LIGHTS_BACK_LEFT_PIN, blinkLedState);
+	        digitalWrite(LIGHTS_BACK_RIGHT_PIN,blinkLedState);
             blinkTime = currentTime;
+            blink5sTime = 0;
+        }
+
+        break;
+    case LightsMode::BLINKING_5S:
+        currentTime = millis();
+
+        if (blink5sTime == 0 || ((currentTime - blink5sTime) >= LIGHTS_BLINK_5S_PERIOD)) {
+            for (uint8_t i = 0; i < 2; i++) {
+                digitalWrite(LIGHTS_FRONT_LEFT_PIN, HIGH);
+                digitalWrite(LIGHTS_FRONT_RIGHT_PIN, HIGH);
+                digitalWrite(LIGHTS_BACK_LEFT_PIN, HIGH);
+                digitalWrite(LIGHTS_BACK_RIGHT_PIN, HIGH);
+                delay(LIGHTS_BLINK_5S_DURATION);
+                digitalWrite(LIGHTS_FRONT_LEFT_PIN, LOW);
+                digitalWrite(LIGHTS_FRONT_RIGHT_PIN, LOW);
+                digitalWrite(LIGHTS_BACK_LEFT_PIN, LOW);
+                digitalWrite(LIGHTS_BACK_RIGHT_PIN, LOW);
+                delay(LIGHTS_BLINK_5S_DURATION);
+            }
+            
+            blink5sTime = currentTime;
         }
 
         break;
@@ -176,58 +206,66 @@ void Vehicle::stop()
 
 void Vehicle::applyShockSensitivity()
 {
-    uint8_t threshold = 31.0/100.0*settings.shockSensitivity;
-    uint8_t errorAccumulator = imu.writeRegister(LSM6DS3_ACC_GYRO_TAP_THS_6D, threshold);
+    imu.writeRegister(LSM6DS3_ACC_GYRO_TAP_THS_6D, computeShockThreshold());
 }
 
-bool Vehicle::readShockDetected()
+bool Vehicle::readShockDetected(bool resumeLightAfter)
 {
     byte detection;
     
     imu.readRegister(&detection, 0x1C); 
 
     if (detection &= 0x40) {
-        shockDetected = true;
+        setShockDetected();
 	
-	// Blink of the trunk LED in RED to signal a Shock 
-	digitalWrite(LIGHTS_TRUNK_RED, HIGH);
-    	digitalWrite(LIGHTS_TRUNK_GREEN, LOW);
-  	delay(LIGHTS_BLINK_SHOCK_DURATION);
+        // Blink of the trunk LED in RED to signal a Shock 
+        digitalWrite(LIGHTS_TRUNK_RED, HIGH);
+        digitalWrite(LIGHTS_TRUNK_GREEN, LOW);
+        delay(LIGHTS_BLINK_SHOCK_DURATION);
 
-	digitalWrite(LIGHTS_TRUNK_RED, LOW);
-    	digitalWrite(LIGHTS_TRUNK_GREEN, LOW);
-  	delay(LIGHTS_BLINK_SHOCK_DURATION);
+        digitalWrite(LIGHTS_TRUNK_RED, LOW);
+        digitalWrite(LIGHTS_TRUNK_GREEN, LOW);
+        delay(LIGHTS_BLINK_SHOCK_DURATION);
 
-	digitalWrite(LIGHTS_TRUNK_RED, HIGH);
-    	digitalWrite(LIGHTS_TRUNK_GREEN, LOW);
-  	delay(LIGHTS_BLINK_SHOCK_DURATION);
+        digitalWrite(LIGHTS_TRUNK_RED, HIGH);
+        digitalWrite(LIGHTS_TRUNK_GREEN, LOW);
+        delay(LIGHTS_BLINK_SHOCK_DURATION);
 
-	digitalWrite(LIGHTS_TRUNK_RED, LOW);
-    	digitalWrite(LIGHTS_TRUNK_GREEN, LOW);
-  	delay(LIGHTS_BLINK_SHOCK_DURATION);
+        digitalWrite(LIGHTS_TRUNK_RED, LOW);
+        digitalWrite(LIGHTS_TRUNK_GREEN, LOW);
+        delay(LIGHTS_BLINK_SHOCK_DURATION);
 
-	// REMETTRE A L'ETAT PRECEDENT !!!! 
-	
-
-    } else {
-        shockDetected = false;
+        if (resumeLightAfter) {
+            switch(trunkStatus) {
+                case TrunkState::CLOSED:
+                case TrunkState::CLOSING:
+                    digitalWrite(LIGHTS_TRUNK_RED, HIGH);
+                    break;
+                case TrunkState::OPENED:
+                case TrunkState::OPENING:
+                    digitalWrite(LIGHTS_TRUNK_GREEN, HIGH);
+                    break;
+            }
+        }
     }
-
+    
     return shockDetected;
 }
 
 void Vehicle::setShockDetected()
 {
+    Serial.print("Set shock detected at ");
     shockDetected = true;
-    digitalWriteLIGHTS_BELLOW_RED, HIGH);
+    digitalWrite(LIGHTS_BELLOW_RED, HIGH);
     shockTime = millis();
+    Serial.println(shockTime);
 }
 
 void Vehicle::resetShockDetected()
 {
     if (shockDetected && ((millis() - shockTime) >= SHOCK_DURATION_IN_MS)) {
         shockDetected = false;
-	digitalWriteLIGHTS_BELLOW_RED, LOW);
+	    digitalWrite(LIGHTS_BELLOW_RED, LOW);
         shockTime = 0;
     }
 }
@@ -243,3 +281,7 @@ short int Vehicle::readTemperature()
     return temperature;
 }
 
+uint8_t Vehicle::computeShockThreshold() const
+{
+    return settings.shockSensitivity == 0 ? 0 : map(settings.shockSensitivity, 1, 100, 15, 1);
+}

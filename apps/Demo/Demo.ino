@@ -27,6 +27,7 @@ https://github.com/sricardo/VehicleDemo.git
 
 using namespace demo;
 
+static bool isConnected = false;
 static Vehicle vehicle;         // Creates the Vehicle
 static BLEManager bleManager;   // Creates the BLE Manager
 
@@ -40,6 +41,7 @@ void blePeripheralConnectHandler(BLEDevice central)
     digitalWrite(LED_BUILTIN, HIGH);
     digitalWrite(LIGHTS_TRUNK_RED, HIGH);
     digitalWrite(LIGHTS_TRUNK_GREEN, LOW);
+    isConnected = true;
 }
 
 /** \brief Handler managing disconnection 
@@ -52,6 +54,7 @@ void blePeripheralDisconnectHandler(BLEDevice central)
     digitalWrite(LED_BUILTIN, LOW);
     digitalWrite(LIGHTS_TRUNK_RED, LOW);
     digitalWrite(LIGHTS_TRUNK_GREEN, LOW);
+    isConnected = false;
 }
 
 /** \brief Handler managing vehicle lights command reception
@@ -74,6 +77,9 @@ void vehicleLightsCommandCharacteristicWritten(BLEDevice central, BLECharacteris
     case LightsMode::BLINKING:
         Serial.println("BLINKING");
         break;
+    case LightsMode::BLINKING_5S:
+        Serial.println("BLINKING_5S");
+        break;
     default:
         Serial.print(value);
         Serial.println(" (unknown value)");
@@ -89,7 +95,7 @@ void vehicleLightsCommandCharacteristicWritten(BLEDevice central, BLECharacteris
  */
 void vehicleIgnitionCommandCharacteristicWritten(BLEDevice central, BLECharacteristic characteristic)
 {
-    bool value = characteristic.value();
+    bool value = (bool)(*(characteristic.value()));
 
     Serial.print("Vehicle ignition command received: ");
 
@@ -155,7 +161,7 @@ void vehicleTemperatureUnitSettingCharacteristicWritten(BLEDevice central, BLECh
  */
 void vehicleTrunkCommandCharacteristicWritten(BLEDevice central, BLECharacteristic characteristic)
 {
-    bool value = characteristic.value();
+    bool value = (bool)(*(characteristic.value()));
 
     Serial.print("Vehicle trunk command received: ");
 
@@ -234,7 +240,7 @@ void setup()
 void loop()
 {
     BLE.poll();
-    bleManager.sendVehicleShockDetected(vehicle.readShockDetected(), true);
+    bleManager.sendVehicleShockDetected(vehicle.readShockDetected(isConnected), true);
     bleManager.sendVehicleTemperature(vehicle.readTemperature(), true);
     bleManager.sendVehicleTrunkState(vehicle.getTrunkStatus(), true);
     vehicle.applyLightsMode();
