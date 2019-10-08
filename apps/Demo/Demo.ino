@@ -77,8 +77,8 @@ void vehicleLightsCommandCharacteristicWritten(BLEDevice central, BLECharacteris
     case LightsMode::BLINKING:
         Serial.println("BLINKING");
         break;
-    case LightsMode::BLINKING_5S:
-        Serial.println("BLINKING_5S");
+    case LightsMode::BLINKING_1S:
+        Serial.println("BLINKING_1S");
         break;
     default:
         Serial.print(value);
@@ -241,7 +241,7 @@ void loop()
 {
     BLE.poll();
     bleManager.sendVehicleShockDetected(vehicle.readShockDetected(isConnected), true);
-    bleManager.sendVehicleTemperature(vehicle.readTemperature(), true);
+    //bleManager.sendVehicleTemperature(vehicle.readTemperature(), true);
     bleManager.sendVehicleTrunkState(vehicle.getTrunkStatus(), true);
     vehicle.applyLightsMode();
     vehicle.autoCloseTrunk();

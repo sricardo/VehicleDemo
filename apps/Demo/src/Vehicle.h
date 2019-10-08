@@ -25,7 +25,7 @@ namespace demo
         OFF = 0,
         ON = 1,
         BLINKING = 2,
-        BLINKING_5S = 3
+        BLINKING_1S = 3
     };
 
     /** \brief Temperature unit */

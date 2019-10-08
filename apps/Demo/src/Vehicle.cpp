@@ -123,7 +123,7 @@ void Vehicle::setLightsMode(LightsMode mode)
 void Vehicle::applyLightsMode()
 {
     static char blinkLedState = LOW;
-    static unsigned long blinkTime, blink5sTime, currentTime = 0;
+    static unsigned long blinkTime, blink1sTime, currentTime = 0;
 
     switch(lightsMode) {
     case LightsMode::OFF:
@@ -134,7 +134,7 @@ void Vehicle::applyLightsMode()
 	        digitalWrite(LIGHTS_BACK_LEFT_PIN, blinkLedState);
 	        digitalWrite(LIGHTS_BACK_RIGHT_PIN,blinkLedState);
             blinkTime = 0;
-            blink5sTime = 0;
+            blink1sTime = 0;
         }
 
         break;
@@ -146,7 +146,7 @@ void Vehicle::applyLightsMode()
 	        digitalWrite(LIGHTS_BACK_LEFT_PIN, blinkLedState);
 	        digitalWrite(LIGHTS_BACK_RIGHT_PIN,blinkLedState);
             blinkTime = 0;
-            blink5sTime = 0;
+            blink1sTime = 0;
         }
 
         break;
@@ -160,28 +160,28 @@ void Vehicle::applyLightsMode()
 	        digitalWrite(LIGHTS_BACK_LEFT_PIN, blinkLedState);
 	        digitalWrite(LIGHTS_BACK_RIGHT_PIN,blinkLedState);
             blinkTime = currentTime;
-            blink5sTime = 0;
+            blink1sTime = 0;
         }
 
         break;
-    case LightsMode::BLINKING_5S:
+    case LightsMode::BLINKING_1S:
         currentTime = millis();
 
-        if (blink5sTime == 0 || ((currentTime - blink5sTime) >= LIGHTS_BLINK_5S_PERIOD)) {
+        if (blink1sTime == 0 || ((currentTime - blink1sTime) >= LIGHTS_BLINK_1S_PERIOD)) {
             for (uint8_t i = 0; i < 2; i++) {
                 digitalWrite(LIGHTS_FRONT_LEFT_PIN, HIGH);
                 digitalWrite(LIGHTS_FRONT_RIGHT_PIN, HIGH);
                 digitalWrite(LIGHTS_BACK_LEFT_PIN, HIGH);
                 digitalWrite(LIGHTS_BACK_RIGHT_PIN, HIGH);
-                delay(LIGHTS_BLINK_5S_DURATION);
+                delay(LIGHTS_BLINK_1S_DURATION);
                 digitalWrite(LIGHTS_FRONT_LEFT_PIN, LOW);
                 digitalWrite(LIGHTS_FRONT_RIGHT_PIN, LOW);
                 digitalWrite(LIGHTS_BACK_LEFT_PIN, LOW);
                 digitalWrite(LIGHTS_BACK_RIGHT_PIN, LOW);
-                delay(LIGHTS_BLINK_5S_DURATION);
+                delay(LIGHTS_BLINK_1S_DURATION);
             }
-            
-            blink5sTime = currentTime;
+
+            blink1sTime = currentTime;
         }
 
         break;
@@ -217,34 +217,27 @@ bool Vehicle::readShockDetected(bool resumeLightAfter)
 
     if (detection &= 0x40) {
         setShockDetected();
-	
-        // Blink of the trunk LED in RED to signal a Shock 
-        digitalWrite(LIGHTS_TRUNK_RED, HIGH);
-        digitalWrite(LIGHTS_TRUNK_GREEN, LOW);
-        delay(LIGHTS_BLINK_SHOCK_DURATION);
 
-        digitalWrite(LIGHTS_TRUNK_RED, LOW);
-        digitalWrite(LIGHTS_TRUNK_GREEN, LOW);
-        delay(LIGHTS_BLINK_SHOCK_DURATION);
+        // Blink of the trunk LED in RED to signal a Shock if trunk is not open
+        if (trunkStatus != OPENED && trunkStatus != OPENING) {
+            digitalWrite(LIGHTS_TRUNK_RED, HIGH);
+            digitalWrite(LIGHTS_TRUNK_GREEN, LOW);
+            delay(LIGHTS_BLINK_SHOCK_DURATION);
 
-        digitalWrite(LIGHTS_TRUNK_RED, HIGH);
-        digitalWrite(LIGHTS_TRUNK_GREEN, LOW);
-        delay(LIGHTS_BLINK_SHOCK_DURATION);
+            digitalWrite(LIGHTS_TRUNK_RED, LOW);
+            digitalWrite(LIGHTS_TRUNK_GREEN, LOW);
+            delay(LIGHTS_BLINK_SHOCK_DURATION);
 
-        digitalWrite(LIGHTS_TRUNK_RED, LOW);
-        digitalWrite(LIGHTS_TRUNK_GREEN, LOW);
-        delay(LIGHTS_BLINK_SHOCK_DURATION);
+            digitalWrite(LIGHTS_TRUNK_RED, HIGH);
+            digitalWrite(LIGHTS_TRUNK_GREEN, LOW);
+            delay(LIGHTS_BLINK_SHOCK_DURATION);
 
-        if (resumeLightAfter) {
-            switch(trunkStatus) {
-                case TrunkState::CLOSED:
-                case TrunkState::CLOSING:
-                    digitalWrite(LIGHTS_TRUNK_RED, HIGH);
-                    break;
-                case TrunkState::OPENED:
-                case TrunkState::OPENING:
-                    digitalWrite(LIGHTS_TRUNK_GREEN, HIGH);
-                    break;
+            digitalWrite(LIGHTS_TRUNK_RED, LOW);
+            digitalWrite(LIGHTS_TRUNK_GREEN, LOW);
+            delay(LIGHTS_BLINK_SHOCK_DURATION);
+
+            if (resumeLightAfter) {
+                digitalWrite(LIGHTS_TRUNK_RED, HIGH);
             }
         }
     }
