@@ -1,0 +1,2 @@
+#define SECRET_WIFI_NAME ""
+#define SECRET_PASSWORD ""
