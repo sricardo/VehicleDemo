@@ -38,6 +38,8 @@ void blePeripheralConnectHandler(BLEDevice central)
     Serial.print("Connected to central: ");
     Serial.println(central.address());
     digitalWrite(LED_BUILTIN, HIGH);
+    digitalWrite(LIGHTS_TRUNK_RED, HIGH);
+    digitalWrite(LIGHTS_TRUNK_GREEN, LOW);
 }
 
 /** \brief Handler managing disconnection 
@@ -48,6 +50,8 @@ void blePeripheralDisconnectHandler(BLEDevice central)
     Serial.print("Disconnected to central: ");
     Serial.println(central.address());
     digitalWrite(LED_BUILTIN, LOW);
+    digitalWrite(LIGHTS_TRUNK_RED, LOW);
+    digitalWrite(LIGHTS_TRUNK_GREEN, LOW);
 }
 
 /** \brief Handler managing vehicle lights command reception
@@ -170,9 +174,28 @@ void vehicleTrunkCommandCharacteristicWritten(BLEDevice central, BLECharacterist
 void setup()
 {
     Serial.begin(SERIAL_BAUDRATE);
-    pinMode(LED_BUILTIN, OUTPUT);
-    pinMode(LIGHTS_PIN, OUTPUT);
     
+    pinMode(LED_BUILTIN, OUTPUT);
+    pinMode(LIGHTS_FRONT_LEFT_PIN, OUTPUT);
+    pinMode(LIGHTS_FRONT_RIGHT_PIN, OUTPUT);
+    pinMode(LIGHTS_BACK_LEFT_PIN, OUTPUT);
+    pinMode(LIGHTS_BACK_RIGHT_PIN, OUTPUT);
+    pinMode(IGNITION_PIN, OUTPUT);
+    pinMode(SERVO_FOR_TRUNK_PIN, OUTPUT);
+    pinMode(LIGHTS_BELLOW_RED, OUTPUT);
+    pinMode(LIGHTS_TRUNK_RED, OUTPUT);
+    pinMode(LIGHTS_TRUNK_GREEN, OUTPUT);
+
+    digitalWrite(LIGHTS_FRONT_LEFT_PIN,LOW);
+    digitalWrite(LIGHTS_FRONT_RIGHT_PIN,LOW);
+    digitalWrite(LIGHTS_BACK_LEFT_PIN,LOW);
+    digitalWrite(LIGHTS_BACK_RIGHT_PIN,LOW);
+    digitalWrite(IGNITION_PIN,LOW);
+    digitalWrite(LIGHTS_BELLOW_RED,LOW);
+    digitalWrite(LIGHTS_TRUNK_RED,LOW);
+    digitalWrite(LIGHTS_FRONT_LEFT_PIN,LOW);
+    digitalWrite(LIGHTS_TRUNK_GREEN,LOW);    
+
     if (bleManager.initBLE(BLE_LOCAL_NAME)) {
         Serial.println("BLE device active, waiting for connections...");
     } else {

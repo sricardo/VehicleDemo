@@ -12,7 +12,8 @@ Vehicle::Vehicle():
     lightsMode(LightsMode::OFF),
     imu(IMU_BUS_TYPE, IMU_INPUT_ARG),
     trunkStatus(TrunkState::CLOSED),
-    trunkTimer(0)
+    trunkTimer(0)   
+
 {
     settings.shockSensitivity = 0;
     settings.tempUnit = TemperatureUnit::CELSIUS;
@@ -29,10 +30,10 @@ bool Vehicle::initIMU()
 
 	uint8_t errorAccumulator = 0; // Error accumulation variable
 
-    errorAccumulator += imu.writeRegister(LSM6DS3_ACC_GYRO_CTRL1_XL, IMU_CTRL1_XL);         // 1. Turns on the accelerometer
+    errorAccumulator += imu.writeRegister(LSM6DS3_ACC_GYRO_CTRL1_XL, IMU_CTRL1_XL);         	// 1. Turns on the accelerometer
 	errorAccumulator += imu.writeRegister(LSM6DS3_ACC_GYRO_TAP_CFG1, IMU_TAP_CFG);          // 2. Enables tap detection
 	errorAccumulator += imu.writeRegister(LSM6DS3_ACC_GYRO_TAP_THS_6D, IMU_TAP_THS_6D);     // 3. Sets tap threshold
-    errorAccumulator += imu.writeRegister(LSM6DS3_ACC_GYRO_INT_DUR2, IMU_INT_DUR2);         // 4. Sets Quiet and Shock time windows 
+    errorAccumulator += imu.writeRegister(LSM6DS3_ACC_GYRO_INT_DUR2, IMU_INT_DUR2);         	// 4. Sets Quiet and Shock time windows 
 	errorAccumulator += imu.writeRegister(LSM6DS3_ACC_GYRO_WAKE_UP_THS, IMU_WAKE_UP_THS);   // 5. Enables single or double tap
 	errorAccumulator += imu.writeRegister(LSM6DS3_ACC_GYRO_MD1_CFG, IMU_MD1_CFG);           // 6. Single tap interrupt
 
@@ -51,6 +52,9 @@ void Vehicle::closeTrunk()
     Serial.print("Closing vehicle's trunk...");
     trunkStatus = TrunkState::CLOSING;
 
+    digitalWrite(LIGHTS_TRUNK_RED, HIGH);
+    digitalWrite(LIGHTS_TRUNK_GREEN, LOW);
+
     for (unsigned int delay = SERVO_FOR_TRUNK_DELAY_MIN ; delay <= SERVO_FOR_TRUNK_DELAY_MAX ; delay+=SERVO_FOR_TRUNK_DELAY_STEP_FOR_CLOSE) {
         digitalWrite(SERVO_FOR_TRUNK_PIN, HIGH);
         delayMicroseconds(delay);
@@ -66,6 +70,9 @@ void Vehicle::openTrunk()
 {
     Serial.print("Opening vehicle's trunk...");
     trunkStatus = TrunkState::OPENING;
+
+    digitalWrite(LIGHTS_TRUNK_RED, LOW);
+    digitalWrite(LIGHTS_TRUNK_GREEN, HIGH);
 
     for (unsigned int delay = SERVO_FOR_TRUNK_DELAY_MAX; delay >= SERVO_FOR_TRUNK_DELAY_MIN ; delay-=SERVO_FOR_TRUNK_DELAY_STEP_FOR_OPEN) {
         digitalWrite(SERVO_FOR_TRUNK_PIN, HIGH);
@@ -118,14 +125,20 @@ void Vehicle::applyLightsMode()
     case LightsMode::OFF:
         if (blinkLedState == HIGH || blinkTime != 0) {
             blinkLedState = LOW;
-            digitalWrite(LIGHTS_PIN, blinkLedState);
+            digitalWrite(LIGHTS_FRONT_LEFT_PIN, blinkLedState);
+	    digitalWrite(LIGHTS_FRONT_RIGHT_PIN, blinkLedState);
+	    digitalWrite(LIGHTS_BACK_LEFT_PIN, blinkLedState);
+	    digitalWrite(LIGHTS_BACK_RIGHT_PIN,blinkLedState);
             blinkTime = 0;
         }
         break;
     case LightsMode::ON:
         if (blinkLedState == LOW || blinkTime != 0) {
             blinkLedState = HIGH;
-            digitalWrite(LIGHTS_PIN, blinkLedState);
+            digitalWrite(LIGHTS_FRONT_LEFT_PIN, blinkLedState);
+	    digitalWrite(LIGHTS_FRONT_RIGHT_PIN, blinkLedState);
+	    digitalWrite(LIGHTS_BACK_LEFT_PIN, blinkLedState);
+	    digitalWrite(LIGHTS_BACK_RIGHT_PIN,blinkLedState);
             blinkTime = 0;
         }
         break;
@@ -134,7 +147,10 @@ void Vehicle::applyLightsMode()
 
         if (currentTime - blinkTime >= LIGHTS_BLINK_DURATION) {
             blinkLedState = (blinkLedState == LOW) ? HIGH : LOW;
-            digitalWrite(LIGHTS_PIN, blinkLedState);
+            digitalWrite(LIGHTS_FRONT_LEFT_PIN, blinkLedState);
+	    digitalWrite(LIGHTS_FRONT_RIGHT_PIN, blinkLedState);
+	    digitalWrite(LIGHTS_BACK_LEFT_PIN, blinkLedState);
+	    digitalWrite(LIGHTS_BACK_RIGHT_PIN,blinkLedState);
             blinkTime = currentTime;
         }
 
@@ -153,7 +169,7 @@ void Vehicle::start()
 void Vehicle::stop()
 {
     Serial.print("Stopping the vehicle...");
-    digitalWrite(IGNITION_PIN, HIGH);
+    digitalWrite(IGNITION_PIN, LOW);
     ignitionON = false;
     Serial.println("OK");
 }
