@@ -263,7 +263,7 @@ void Vehicle::resetShockDetected()
     }
 }
 
-short int Vehicle::readTemperature()
+float Vehicle::readTemperature()
 {
     if (settings.tempUnit == TemperatureUnit::CELSIUS) {
         temperature = imu.readTempC();

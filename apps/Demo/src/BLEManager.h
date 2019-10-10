@@ -57,8 +57,9 @@ namespace demo
         /** \brief Sends the given temperature over BLE
          *  \param temperature the given temperature
          *  \param onlyOnChange indicates if data must be sent only if it has changed
+         *  \param minDiff the minimum difference to consider the value has changed
          */
-        void sendVehicleTemperature(short int temperature, bool onlyOnChange = true);
+        void sendVehicleTemperature(float temperature, bool onlyOnChange = true, float minDiff = 0.25);
         /** \brief Sends the given trunk state over BLE 
          *  \param vehicleTrunkState the given trunk state
          *  \param onlyOnChange indicates if data must be sent only if it has changed
@@ -77,10 +78,11 @@ namespace demo
         BLEShortCharacteristic          vehiclePitchDataCharacteristic;                 /**< \brief BLE characteristic for vehicle pitch data */
         BLEShortCharacteristic          vehicleRollDataCharacteristic;                  /**< \brief BLE characteristic for vehicle roll data */
         BLEBoolCharacteristic           vehicleShockDetectionDataCharacteristic;        /**< \brief BLE characteristic for vehicle shock detection data */  
-        BLEShortCharacteristic          vehicleTemperatureDataCharacteristic;           /**< \brief BLE characteristic for vehicle temperature data */
+        BLEFloatCharacteristic          vehicleTemperatureDataCharacteristic;           /**< \brief BLE characteristic for vehicle temperature data */
         BLEUnsignedCharCharacteristic   vehicleTrunkStateDataCharacteristic;            /**< \brief BLE characteristic for vehicle trunk state data */
     
     private:
+        /** \brief Sets BLE services and characteristics */
         void setServicesAndCharacteristics();
     };
 }

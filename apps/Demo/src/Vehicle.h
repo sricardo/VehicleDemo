@@ -107,7 +107,7 @@ namespace demo
         /** \brief Reads the temperature from the IMU 
          *  \return the temperature, in Celsius or Farenheit, depending on the vehicle settings
          */
-        short int readTemperature();
+        float readTemperature();
 
         Settings settings;      /**< Vehicle settings */
 
@@ -119,7 +119,7 @@ namespace demo
         unsigned long shockTime;    /**< Last shock time */
         short int pitch;            /**< Current pitch angle */
         short int roll;             /**< Current roll angle */
-        short int temperature;      /**< Current temperature */
+        float temperature;          /**< Current temperature */
         LightsMode lightsMode;      /**< Current mode of the lights */
         LSM6DS3 imu;                /**< IMU */
         TrunkState trunkStatus;     /**< Vehicle trunk status */

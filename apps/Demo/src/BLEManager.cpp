@@ -13,7 +13,7 @@ BLEManager::BLEManager():
     vehiclePitchDataCharacteristic(BLEShortCharacteristic(VEHICLE_PITCH_DATA_CHARACTERISTIC, BLERead | BLENotify)),
     vehicleRollDataCharacteristic(BLEShortCharacteristic(VEHICLE_ROLL_DATA_CHARACTERISTIC, BLERead | BLENotify)),
     vehicleShockDetectionDataCharacteristic(BLEBoolCharacteristic(VEHICLE_SHOCK_DETECTION_DATA_CHARACTERISTIC, BLERead | BLENotify)),
-    vehicleTemperatureDataCharacteristic(BLEShortCharacteristic(VEHICLE_TEMPERATURE_DATA_CHARACTERISTIC, BLERead | BLENotify)),
+    vehicleTemperatureDataCharacteristic(BLEFloatCharacteristic(VEHICLE_TEMPERATURE_DATA_CHARACTERISTIC, BLERead | BLENotify)),
     vehicleTrunkStateDataCharacteristic(BLEUnsignedCharCharacteristic(VEHICLE_TRUNK_STATUS_DATA_CHARACTERISTIC, BLERead | BLENotify))
 {
 }
@@ -39,7 +39,7 @@ bool BLEManager::initBLE(const char* BLELocalName)
     vehiclePitchDataCharacteristic.writeValue(0);
     vehicleRollDataCharacteristic.writeValue(0);
     vehicleShockDetectionDataCharacteristic.writeValue(false);  
-    vehicleTemperatureDataCharacteristic.writeValue(0);
+    vehicleTemperatureDataCharacteristic.writeValue(0.);
     vehicleTrunkStateDataCharacteristic.writeValue(0);
     Serial.println("OK");
 
@@ -70,18 +70,21 @@ void BLEManager::sendVehicleShockDetected(bool shockDetected, bool onlyOnChange)
     Serial.println("OK");
 }
 
-void BLEManager::sendVehicleTemperature(short int temperature, bool onlyOnChange)
+void BLEManager::sendVehicleTemperature(float temperature, bool onlyOnChange, float minDiff)
 {
-    static short int lastSentTemperature = 0;
+    static float lastSentTemperature = 0.;
 
-    if (onlyOnChange && (lastSentTemperature == temperature)) {
+    if (onlyOnChange && (abs(lastSentTemperature-temperature) <= minDiff)) {
         return;
     }
 
-    Serial.print("Sending vehicle's temperature...");
+    Serial.print("Sending vehicle's temperature... (last=");
+    Serial.print(lastSentTemperature);
+    Serial.print(", current=");
+    Serial.print(temperature);
     vehicleTemperatureDataCharacteristic.writeValue(temperature);
     lastSentTemperature = temperature;
-    Serial.println("OK");
+    Serial.println(") OK");
 }
 
 void BLEManager::sendVehicleTrunkState(TrunkState vehicleTrunkState, bool onlyOnChange)

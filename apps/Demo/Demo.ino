@@ -177,34 +177,30 @@ void vehicleTrunkCommandCharacteristicWritten(BLEDevice central, BLECharacterist
     }
 }
 
-void setup()
+void initPins()
 {
-    Serial.begin(SERIAL_BAUDRATE);
-
-
-    //Initialisation of the PIN mode
+    pinMode(IGNITION_PIN, OUTPUT);
     pinMode(LED_BUILTIN, OUTPUT);
-    pinMode(LIGHTS_FRONT_LEFT_PIN, OUTPUT);
-    pinMode(LIGHTS_FRONT_RIGHT_PIN, OUTPUT);
     pinMode(LIGHTS_BACK_LEFT_PIN, OUTPUT);
     pinMode(LIGHTS_BACK_RIGHT_PIN, OUTPUT);
-    pinMode(IGNITION_PIN, OUTPUT);
-    pinMode(SERVO_FOR_TRUNK_PIN, OUTPUT);
     pinMode(LIGHTS_BELLOW_RED, OUTPUT);
-    pinMode(LIGHTS_TRUNK_RED, OUTPUT);
+    pinMode(LIGHTS_FRONT_LEFT_PIN, OUTPUT);
+    pinMode(LIGHTS_FRONT_RIGHT_PIN, OUTPUT);
     pinMode(LIGHTS_TRUNK_GREEN, OUTPUT);
+    pinMode(LIGHTS_TRUNK_RED, OUTPUT);
+    pinMode(SERVO_FOR_TRUNK_PIN, OUTPUT);
 
     // Put all the PIN to LOW
-    digitalWrite(LIGHTS_FRONT_LEFT_PIN,LOW);
-    digitalWrite(LIGHTS_FRONT_RIGHT_PIN,LOW);
+    digitalWrite(IGNITION_PIN,LOW);
+    digitalWrite(LED_BUILTIN, LOW);
     digitalWrite(LIGHTS_BACK_LEFT_PIN,LOW);
     digitalWrite(LIGHTS_BACK_RIGHT_PIN,LOW);
-    digitalWrite(IGNITION_PIN,LOW);
     digitalWrite(LIGHTS_BELLOW_RED,LOW);
-    digitalWrite(LIGHTS_TRUNK_RED,LOW);
     digitalWrite(LIGHTS_FRONT_LEFT_PIN,LOW);
-    digitalWrite(LIGHTS_TRUNK_GREEN,LOW); 
-
+    digitalWrite(LIGHTS_FRONT_RIGHT_PIN,LOW);
+    digitalWrite(LIGHTS_TRUNK_GREEN,LOW);
+    digitalWrite(LIGHTS_TRUNK_RED,LOW);
+    
     // Put the servo of the trunk to low mode 
     for (unsigned int i = 0 ; i <= 10 ; i+=1) {
         digitalWrite(SERVO_FOR_TRUNK_PIN, HIGH);
@@ -212,6 +208,12 @@ void setup()
         digitalWrite(SERVO_FOR_TRUNK_PIN, LOW);
         delayMicroseconds(SERVO_FOR_TRUNK_DELAY-SERVO_FOR_TRUNK_DELAY_MAX );
     }
+}
+
+void setup()
+{
+    Serial.begin(SERIAL_BAUDRATE);
+    initPins();
 
     if (bleManager.initBLE(BLE_LOCAL_NAME)) {
         Serial.println("BLE device active, waiting for connections...");
@@ -240,11 +242,10 @@ void setup()
 void loop()
 {
     BLE.poll();
-    bleManager.sendVehicleShockDetected(vehicle.readShockDetected(isConnected), true);
-    //bleManager.sendVehicleTemperature(vehicle.readTemperature(), true);
-    bleManager.sendVehicleTrunkState(vehicle.getTrunkStatus(), true);
+    bleManager.sendVehicleShockDetected(vehicle.readShockDetected(isConnected));
+    bleManager.sendVehicleTemperature(vehicle.readTemperature());
+    bleManager.sendVehicleTrunkState(vehicle.getTrunkStatus());
     vehicle.applyLightsMode();
     vehicle.autoCloseTrunk();
     vehicle.resetShockDetected();
-    
 }
