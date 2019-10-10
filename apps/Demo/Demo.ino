@@ -39,8 +39,7 @@ void blePeripheralConnectHandler(BLEDevice central)
     Serial.print("Connected to central: ");
     Serial.println(central.address());
     digitalWrite(LED_BUILTIN, HIGH);
-    digitalWrite(LIGHTS_TRUNK_RED, HIGH);
-    digitalWrite(LIGHTS_TRUNK_GREEN, LOW);
+    vehicle.setTrunkLights(LightsColor::RED);
     isConnected = true;
 }
 
@@ -52,8 +51,7 @@ void blePeripheralDisconnectHandler(BLEDevice central)
     Serial.print("Disconnected to central: ");
     Serial.println(central.address());
     digitalWrite(LED_BUILTIN, LOW);
-    digitalWrite(LIGHTS_TRUNK_RED, LOW);
-    digitalWrite(LIGHTS_TRUNK_GREEN, LOW);
+    vehicle.setTrunkLights(LightsColor::NONE);
     isConnected = false;
 }
 
@@ -100,7 +98,7 @@ void vehicleIgnitionCommandCharacteristicWritten(BLEDevice central, BLECharacter
     Serial.print("Vehicle ignition command received: ");
 
     switch(value) {
-    case false :                                       //BUG !! ca ne passe jamais à bas.. 
+    case false : 
         Serial.println("OFF");
         vehicle.stop();
         break;
@@ -124,9 +122,8 @@ void vehicleShockSensitivitySettingCharacteristicWritten(BLEDevice central, BLEC
 
     if (value >= 0 && value <= 100) {
         vehicle.settings.shockSensitivity = value;
+        vehicle.applyShockSensitivity();
     }
-
-    vehicle.applyShockSensitivity();
 }
 
 /** \brief Handler managing vehicle temperature unit setting reception
@@ -186,20 +183,16 @@ void initPins()
     pinMode(LIGHTS_BELLOW_RED, OUTPUT);
     pinMode(LIGHTS_FRONT_LEFT_PIN, OUTPUT);
     pinMode(LIGHTS_FRONT_RIGHT_PIN, OUTPUT);
-    pinMode(LIGHTS_TRUNK_GREEN, OUTPUT);
-    pinMode(LIGHTS_TRUNK_RED, OUTPUT);
     pinMode(SERVO_FOR_TRUNK_PIN, OUTPUT);
+    pinMode(TRUNK_LIGHTS_GREEN, OUTPUT);
+    pinMode(TRUNK_LIGHTS_RED, OUTPUT);
 
     // Put all the PIN to LOW
     digitalWrite(IGNITION_PIN,LOW);
     digitalWrite(LED_BUILTIN, LOW);
-    digitalWrite(LIGHTS_BACK_LEFT_PIN,LOW);
-    digitalWrite(LIGHTS_BACK_RIGHT_PIN,LOW);
     digitalWrite(LIGHTS_BELLOW_RED,LOW);
-    digitalWrite(LIGHTS_FRONT_LEFT_PIN,LOW);
-    digitalWrite(LIGHTS_FRONT_RIGHT_PIN,LOW);
-    digitalWrite(LIGHTS_TRUNK_GREEN,LOW);
-    digitalWrite(LIGHTS_TRUNK_RED,LOW);
+    vehicle.setLights(LOW);
+    vehicle.setTrunkLights(LightsColor::NONE);
     
     // Put the servo of the trunk to low mode 
     for (unsigned int i = 0 ; i <= 10 ; i+=1) {

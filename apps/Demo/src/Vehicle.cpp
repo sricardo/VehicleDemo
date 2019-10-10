@@ -51,9 +51,7 @@ void Vehicle::closeTrunk()
 {
     Serial.print("Closing vehicle's trunk...");
     trunkStatus = TrunkState::CLOSING;
-
-    digitalWrite(LIGHTS_TRUNK_RED, HIGH);
-    digitalWrite(LIGHTS_TRUNK_GREEN, LOW);
+    setTrunkLights(LightsColor::RED);
 
     for (unsigned int delay = SERVO_FOR_TRUNK_DELAY_MIN ; delay <= SERVO_FOR_TRUNK_DELAY_MAX ; delay+=SERVO_FOR_TRUNK_DELAY_STEP_FOR_CLOSE) {
         digitalWrite(SERVO_FOR_TRUNK_PIN, HIGH);
@@ -74,9 +72,7 @@ void Vehicle::openTrunk()
 
     Serial.print("Opening vehicle's trunk...");
     trunkStatus = TrunkState::OPENING;
-
-    digitalWrite(LIGHTS_TRUNK_RED, LOW);
-    digitalWrite(LIGHTS_TRUNK_GREEN, HIGH);
+    setTrunkLights(LightsColor::GREEN);
 
     for (unsigned int delay = SERVO_FOR_TRUNK_DELAY_MAX; delay >= SERVO_FOR_TRUNK_DELAY_MIN ; delay-=SERVO_FOR_TRUNK_DELAY_STEP_FOR_OPEN) {
         digitalWrite(SERVO_FOR_TRUNK_PIN, HIGH);
@@ -104,49 +100,32 @@ void Vehicle::autoCloseTrunk()
 
 void Vehicle::setLightsMode(LightsMode mode)
 {
-    Serial.print("Setting light mode: ");
+    Serial.print("Setting lights mode: ");
     lightsMode = mode;
-
-    switch(mode) {
-    case LightsMode::OFF:
-        Serial.println("OFF");
-        break;
-    case LightsMode::ON:
-        Serial.println("ON");
-        break;
-    case LightsMode::BLINKING:
-        Serial.println("BLINKING");
-        break;
-    }
+    Serial.println(mode);
 }
 
 void Vehicle::applyLightsMode()
 {
-    static char blinkLedState = LOW;
+    static uint32_t blinkLedState = LOW;
     static unsigned long blinkTime, blink1sTime, currentTime = 0;
 
     switch(lightsMode) {
     case LightsMode::OFF:
         if (blinkLedState == HIGH || blinkTime != 0) {
             blinkLedState = LOW;
-            digitalWrite(LIGHTS_FRONT_LEFT_PIN, blinkLedState);
-	        digitalWrite(LIGHTS_FRONT_RIGHT_PIN, blinkLedState);
-	        digitalWrite(LIGHTS_BACK_LEFT_PIN, blinkLedState);
-	        digitalWrite(LIGHTS_BACK_RIGHT_PIN,blinkLedState);
             blinkTime = 0;
             blink1sTime = 0;
+            setLights(blinkLedState);
         }
 
         break;
     case LightsMode::ON:
         if (blinkLedState == LOW || blinkTime != 0) {
             blinkLedState = HIGH;
-            digitalWrite(LIGHTS_FRONT_LEFT_PIN, blinkLedState);
-	        digitalWrite(LIGHTS_FRONT_RIGHT_PIN, blinkLedState);
-	        digitalWrite(LIGHTS_BACK_LEFT_PIN, blinkLedState);
-	        digitalWrite(LIGHTS_BACK_RIGHT_PIN,blinkLedState);
             blinkTime = 0;
             blink1sTime = 0;
+            setLights(blinkLedState);
         }
 
         break;
@@ -155,12 +134,9 @@ void Vehicle::applyLightsMode()
 
         if (currentTime - blinkTime >= LIGHTS_BLINK_DURATION) {
             blinkLedState = (blinkLedState == LOW) ? HIGH : LOW;
-            digitalWrite(LIGHTS_FRONT_LEFT_PIN, blinkLedState);
-	        digitalWrite(LIGHTS_FRONT_RIGHT_PIN, blinkLedState);
-	        digitalWrite(LIGHTS_BACK_LEFT_PIN, blinkLedState);
-	        digitalWrite(LIGHTS_BACK_RIGHT_PIN,blinkLedState);
             blinkTime = currentTime;
             blink1sTime = 0;
+            setLights(blinkLedState);
         }
 
         break;
@@ -169,15 +145,9 @@ void Vehicle::applyLightsMode()
 
         if (blink1sTime == 0 || ((currentTime - blink1sTime) >= LIGHTS_BLINK_1S_PERIOD)) {
             for (uint8_t i = 0; i < 2; i++) {
-                digitalWrite(LIGHTS_FRONT_LEFT_PIN, HIGH);
-                digitalWrite(LIGHTS_FRONT_RIGHT_PIN, HIGH);
-                digitalWrite(LIGHTS_BACK_LEFT_PIN, HIGH);
-                digitalWrite(LIGHTS_BACK_RIGHT_PIN, HIGH);
+                setLights(HIGH);
                 delay(LIGHTS_BLINK_1S_DURATION);
-                digitalWrite(LIGHTS_FRONT_LEFT_PIN, LOW);
-                digitalWrite(LIGHTS_FRONT_RIGHT_PIN, LOW);
-                digitalWrite(LIGHTS_BACK_LEFT_PIN, LOW);
-                digitalWrite(LIGHTS_BACK_RIGHT_PIN, LOW);
+                setLights(LOW);
                 delay(LIGHTS_BLINK_1S_DURATION);
             }
 
@@ -218,26 +188,18 @@ bool Vehicle::readShockDetected(bool resumeLightAfter)
     if (detection &= 0x40) {
         setShockDetected();
 
-        // Blink of the trunk LED in RED to signal a Shock if trunk is not open
-        if (trunkStatus != OPENED && trunkStatus != OPENING) {
-            digitalWrite(LIGHTS_TRUNK_RED, HIGH);
-            digitalWrite(LIGHTS_TRUNK_GREEN, LOW);
-            delay(LIGHTS_BLINK_SHOCK_DURATION);
-
-            digitalWrite(LIGHTS_TRUNK_RED, LOW);
-            digitalWrite(LIGHTS_TRUNK_GREEN, LOW);
-            delay(LIGHTS_BLINK_SHOCK_DURATION);
-
-            digitalWrite(LIGHTS_TRUNK_RED, HIGH);
-            digitalWrite(LIGHTS_TRUNK_GREEN, LOW);
-            delay(LIGHTS_BLINK_SHOCK_DURATION);
-
-            digitalWrite(LIGHTS_TRUNK_RED, LOW);
-            digitalWrite(LIGHTS_TRUNK_GREEN, LOW);
-            delay(LIGHTS_BLINK_SHOCK_DURATION);
+        if (trunkStatus != OPENED && trunkStatus != OPENING) { // Blink of the trunk LED in RED to signal a Shock if trunk is not open
+            setTrunkLights(LightsColor::RED);
+            delay(SHOCK_LIGHTS_BLINK_DURATION);
+            setTrunkLights(LightsColor::NONE);
+            delay(SHOCK_LIGHTS_BLINK_DURATION);
+            setTrunkLights(LightsColor::RED);
+            delay(SHOCK_LIGHTS_BLINK_DURATION);
+            setTrunkLights(LightsColor::NONE);
+            delay(SHOCK_LIGHTS_BLINK_DURATION);
 
             if (resumeLightAfter) {
-                digitalWrite(LIGHTS_TRUNK_RED, HIGH);
+                setTrunkLights(LightsColor::RED);
             }
         }
     }
@@ -277,4 +239,30 @@ float Vehicle::readTemperature()
 uint8_t Vehicle::computeShockThreshold() const
 {
     return settings.shockSensitivity == 0 ? 0 : map(settings.shockSensitivity, 1, 100, 15, 1);
+}
+
+void Vehicle::setLights(uint32_t ulVal) const
+{
+    digitalWrite(LIGHTS_FRONT_LEFT_PIN, ulVal);
+	digitalWrite(LIGHTS_FRONT_RIGHT_PIN, ulVal);
+	digitalWrite(LIGHTS_BACK_LEFT_PIN, ulVal);
+	digitalWrite(LIGHTS_BACK_RIGHT_PIN, ulVal);
+}
+
+void Vehicle::setTrunkLights(LightsColor color) const
+{
+    switch(color) {
+    case LightsColor::GREEN:
+        digitalWrite(TRUNK_LIGHTS_GREEN, HIGH);
+        digitalWrite(TRUNK_LIGHTS_RED, LOW);
+        break;
+    case LightsColor::RED:
+        digitalWrite(TRUNK_LIGHTS_GREEN, LOW);
+        digitalWrite(TRUNK_LIGHTS_RED, HIGH);
+        break;
+    default:
+        digitalWrite(TRUNK_LIGHTS_GREEN, LOW);
+        digitalWrite(TRUNK_LIGHTS_RED, LOW);
+        break;
+    }
 }

@@ -19,6 +19,14 @@ https://github.com/sricardo/VehicleDemo.git
 /** \brief Demo elements namespace */
 namespace demo
 {
+    /** \brief Lights color */
+    enum LightsColor
+    {
+        NONE = 0,
+        GREEN = 1,
+        RED = 2
+    };
+
     /** \brief Lights mode */
     enum LightsMode
     {
@@ -78,15 +86,20 @@ namespace demo
         /** \brief Close trunk automatically */
         void autoCloseTrunk();
 
+        /** \brief Sets lights HIGH or LOW
+         *  \param ulVal HIGH or LOW
+         */
+        void setLights(uint32_t ulVal) const;
+        /** \brief Sets trunk lights
+         *  \param color the color to apply
+         */
+        void setTrunkLights(LightsColor color) const;
         /** \brief Sets lights mode
          *  \param mode lights mode to apply
          */
         void setLightsMode(LightsMode mode);
         /** \brief Apply lights mode */
         void applyLightsMode();
-
-        // TODO lights under the vehicle
-        // allumage + couleur
 
         /** \brief Starts the vehicle */
         void start();
@@ -109,10 +122,13 @@ namespace demo
          */
         float readTemperature();
 
-        Settings settings;      /**< Vehicle settings */
+        Settings settings; /**< Vehicle settings */
 
     private:
-        uint8_t computeShockThreshold() const;
+        /** \brief Computes shock threshold from the sensitivity expressed in percentage to IMU range
+         *  \return the computed threshold
+         */
+        uint8_t computeShockThreshold() const;        
 
         bool ignitionON;            /**< Current ignition status */
         bool shockDetected;         /**< Indicates if a shock has been detected */
